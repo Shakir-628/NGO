@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="89e56e11d6cb45cd96792f96d3ea3907" Name="Diagram1">
+        <EntityTypeShape EntityType="NGOModel.AidRequest" Width="1.5" PointX="5.25" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.CashDonation" Width="1.5" PointX="8.25" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.DistributionOrderItem" Width="1.5" PointX="7.5" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.DistributionOrder" Width="1.5" PointX="5.25" PointY="13.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.Document" Width="1.5" PointX="5.25" PointY="16.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.DonationItem" Width="1.5" PointX="7.5" PointY="24.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.Donation" Width="1.5" PointX="10.25" PointY="13.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.Donor" Width="1.5" PointX="6" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.InventoryItem" Width="1.5" PointX="5.25" PointY="23.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.RequestedItem" Width="1.5" PointX="7.5" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.User" Width="1.5" PointX="3" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="NGOModel.UserType" Width="1.5" PointX="0.75" PointY="12" IsExpanded="true" />
+        <AssociationConnector Association="NGOModel.FK__AidReques__NGOId__7D439ABD" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__Requested__Reque__7C4F7684" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK_AidRequests_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK_RequestedItems_AidRequests" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__CashDonat__Donor__76969D2E" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__CashDonat__NGOId__778AC167" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__Distribut__Distr__6E01572D" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__Distribut__NGOId__6FE99F9F" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK_DistributionOrders_DistributionOrders" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__Documents__NGOId__70DDC3D8" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__DonationI__ItemI__787EE5A0" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK_DonationItems_DonationItems" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__Donations__Donor__797309D9" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__Donations__NGOId__7A672E12" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK_Donations_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK__Inventory__NGOId__7B5B524B" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK_InventoryItems_InventoryItems" ManuallyRouted="false" />
+        <AssociationConnector Association="NGOModel.FK_Users_UserType" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
