@@ -1,0 +1,75 @@
+﻿@model NGO_Project.DistributionOrder
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>DistributionOrder</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DistributionLocation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DistributionLocation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrderDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrderDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.User.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.User.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DistributionOrders1.DistributionLocation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DistributionOrders1.DistributionLocation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DistributionOrder1.DistributionLocation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DistributionOrder1.DistributionLocation)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DistributionOrderId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
