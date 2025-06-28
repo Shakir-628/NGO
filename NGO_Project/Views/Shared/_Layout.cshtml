@@ -11,41 +11,45 @@
           href="~/assets/img/kaiadmin/favicon.ico"
           type="image/x-icon" />
 
-    <!-- Fonts and icons -->
     <script src="~/assets/js/plugin/webfont/webfont.min.js"></script>
-    <!-- CSS Files -->
     <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/assets/css/plugins.min.css" />
     <link rel="stylesheet" href="~/assets/css/kaiadmin.min.css" />
 
-    <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="~/assets/css/demo.css" />
     <style>
         html, body {
-            height: 100%;
+            height: 100%; /* Important: Make html and body take up full viewport height */
+            margin: 0;
+            padding: 0;
         }
 
         body {
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            flex-direction: column; /* Stack children vertically */
+            min-height: 100vh; /* Ensure body is at least the viewport height */
         }
 
-        .body-content {
-            flex: 1 0 auto;
+        .main-content-wrapper { /* Or whatever element contains your main page content */
+            flex: 1 0 auto; /* This makes the content area grow and push the footer down */
+            /* flex-grow: 1; -> allows it to grow
+       flex-shrink: 0; -> prevents it from shrinking smaller than its content
+       flex-basis: auto; -> initial size based on content */
         }
 
         footer {
-            flex-shrink: 0;
+            flex-shrink: 0; /* Prevents the footer from shrinking */
+            /* Add your footer styling here (background, padding, etc.) */
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="wrapper">
-        <!-- Sidebar -->
         <div class="sidebar" data-background-color="dark">
             <div class="sidebar-logo">
-                <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
                     <a href="index.html" class="logo">
                         <img src="~/assets/img/kaiadmin/logo_light.svg"
@@ -65,7 +69,6 @@
                         <i class="gg-more-vertical-alt"></i>
                     </button>
                 </div>
-                <!-- End Logo Header -->
             </div>
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
@@ -106,7 +109,7 @@
                                     <li>
                                         <a href="~/InventoryItems/Index">
                                             <span class="sub-item">Items</span>
-                                        </a>                                       
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
@@ -136,174 +139,154 @@
                                     </li>
                                 </ul>
                             </div>
-                        </li>                                             
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
-        <!-- End Sidebar -->
-
         <div class="main-panel">
-            <div class="main-header">
-                <div class="main-header-logo">
-                    <!-- Logo Header -->
-                    <div class="logo-header" data-background-color="dark">
-                        <a href="index.html" class="logo">
-                            <img src="~/assets/img/kaiadmin/logo_light.svg"
-                                 alt="navbar brand"
-                                 class="navbar-brand"
-                                 height="20" />
-                        </a>
-                        <div class="nav-toggle">
-                            <button class="btn btn-toggle toggle-sidebar">
-                                <i class="gg-menu-right"></i>
-                            </button>
-                            <button class="btn btn-toggle sidenav-toggler">
-                                <i class="gg-menu-left"></i>
+            <div class="main-content-wrapper">
+                <div class="main-header">
+                    <div class="main-header-logo">
+                        <div class="logo-header" data-background-color="dark">
+                            <a href="index.html" class="logo">
+                                <img src="~/assets/img/kaiadmin/logo_light.svg"
+                                     alt="navbar brand"
+                                     class="navbar-brand"
+                                     height="20" />
+                            </a>
+                            <div class="nav-toggle">
+                                <button class="btn btn-toggle toggle-sidebar">
+                                    <i class="gg-menu-right"></i>
+                                </button>
+                                <button class="btn btn-toggle sidenav-toggler">
+                                    <i class="gg-menu-left"></i>
+                                </button>
+                            </div>
+                            <button class="topbar-toggler more">
+                                <i class="gg-more-vertical-alt"></i>
                             </button>
                         </div>
-                        <button class="topbar-toggler more">
-                            <i class="gg-more-vertical-alt"></i>
-                        </button>
                     </div>
-                    <!-- End Logo Header -->
-                </div>
-                <!-- Navbar Header -->
-                <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
-                    <div class="container-fluid">
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <!-- Topbar nav -->
-                            <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                                <li class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none">
-                                    <a class="nav-link dropdown-toggle"
-                                       data-bs-toggle="dropdown"
-                                       href="#"
-                                       role="button"
-                                       aria-expanded="false"
-                                       aria-haspopup="true">
-                                        <i class="fa fa-search"></i>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-search animated fadeIn">
-                                        <li>
-                                            <form class="navbar-left navbar-form nav-search">
-                                                <div class="input-group">
-                                                    <input type="text"
-                                                           placeholder="Search ..."
-                                                           class="form-control" />
-                                                </div>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item dropdown hidden-caret">
-                                    <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
-                                        <div class="avatar-sm">
-                                            <img src="~/assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle" />
-                                        </div>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-user animated fadeIn">
-                                        <li>
-                                            <div class="dropdown-user-scroll scrollbar-outer">
-                                                <div class="user-box">
-                                                    <div class="avatar-lg">
-                                                        <img src="~/assets/img/profile.jpg"
-                                                             alt="image profile"
-                                                             class="avatar-img rounded" />
+                    <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+                        <div class="container-fluid">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarNav">
+                                <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                                    <li class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none">
+                                        <a class="nav-link dropdown-toggle"
+                                           data-bs-toggle="dropdown"
+                                           href="#"
+                                           role="button"
+                                           aria-expanded="false"
+                                           aria-haspopup="true">
+                                            <i class="fa fa-search"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-search animated fadeIn">
+                                            <li>
+                                                <form class="navbar-left navbar-form nav-search">
+                                                    <div class="input-group">
+                                                        <input type="text"
+                                                               placeholder="Search ..."
+                                                               class="form-control" />
                                                     </div>
-                                                    <div class="u-text">
-                                                        <h4>Hizrian</h4>
-                                                        <p class="text-muted">hello@example.com</p>
-                                                        <a href="profile.html"
-                                                           class="btn btn-xs btn-secondary btn-sm">View Profile</a>
-                                                    </div>
-                                                </div>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown hidden-caret">
+                                        <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
+                                            <div class="avatar-sm">
+                                                <img src="~/assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle" />
                                             </div>
-                                        </li>
-                                        <li>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">My Profile</a>
-                                            <a class="dropdown-item" href="#">My Balance</a>
-                                            <a class="dropdown-item" href="#">Inbox</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Account Setting</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Logout</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-user animated fadeIn">
+                                            <li>
+                                                <div class="dropdown-user-scroll scrollbar-outer">
+                                                    <div class="user-box">
+                                                        <div class="avatar-lg">
+                                                            <img src="~/assets/img/profile.jpg"
+                                                                 alt="image profile"
+                                                                 class="avatar-img rounded" />
+                                                        </div>
+                                                        <div class="u-text">
+                                                            <h4>Hizrian</h4>
+                                                            <p class="text-muted">hello@example.com</p>
+                                                            <a href="profile.html"
+                                                               class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" href="#">My Profile</a>
+                                                <a class="dropdown-item" href="#">My Balance</a>
+                                                <a class="dropdown-item" href="#">Inbox</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" href="#">Account Setting</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" href="#">Logout</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </nav>
+                    </nav>
+                </div>
                 <div class="container">
                     <div class="page-inner">
                         @RenderBody()
                     </div>
                 </div>
-                <footer class="footer">
-                    <div class="container-fluid d-flex justify-content-between">
-                        <nav class="pull-left">
-                            <ul class="nav">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="http://www.themekita.com">
-                                        ThemeKita
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"> Help </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"> Licenses </a>
-                                </li>
-                            </ul>
-                        </nav>
-                        <div class="copyright">
-                            2024, made with <i class="fa fa-heart heart text-danger"></i> by
-                            <a href="http://www.themekita.com">ThemeKita</a>
-                        </div>
-                        <div>
-                            Distributed by
-                            <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>.
-                        </div>
-                    </div>
-                </footer>
             </div>
+            @*<footer class="footer">
+                <div class="container-fluid d-flex justify-content-between">
+                    <nav class="pull-left">
+                        <ul class="nav">
+                            <li class="nav-item">                               
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"> Licenses </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="copyright">
+                        2025, made Hassan <i class="fa fa-heart heart text-danger"></i> by
+                        <a href="http://www.themekita.com">ThemeKita</a>
+                    </div>
+                    <div>
+                        Distributed by
+                        <a href="#">ThemeWagon</a>.
+                    </div>
+                </div>
+            </footer>*@
         </div>
     </div>
-    <!--   Core JS Files   -->
     <script src="~/assets/js/core/jquery-3.7.1.min.js"></script>
     <script src="~/assets/js/core/popper.min.js"></script>
     <script src="~/assets/js/core/bootstrap.min.js"></script>
 
-    <!-- jQuery Scrollbar -->
     <script src="~/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
 
-    <!-- Chart JS -->
     <script src="~/assets/js/plugin/chart.js/chart.min.js"></script>
 
-    <!-- jQuery Sparkline -->
     <script src="~/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
 
-    <!-- Chart Circle -->
     <script src="~/assets/js/plugin/chart-circle/circles.min.js"></script>
 
-    <!-- Datatables -->
     <script src="~/assets/js/plugin/datatables/datatables.min.js"></script>
 
-    <!-- Bootstrap Notify -->
     <script src="~/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
 
-    <!-- jQuery Vector Maps -->
     <script src="~/assets/js/plugin/jsvectormap/jsvectormap.min.js"></script>
     <script src="~/assets/js/plugin/jsvectormap/world.js"></script>
 
-    <!-- Sweet Alert -->
     <script src="~/assets/js/plugin/sweetalert/sweetalert.min.js"></script>
 
-    <!-- Kaiadmin JS -->
     <script src="~/assets/js/kaiadmin.min.js"></script>
 </body>
 </html>

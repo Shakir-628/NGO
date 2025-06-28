@@ -10,9 +10,9 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
-    <style>
-        <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet" >
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
 
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -75,7 +75,7 @@
 
         .user-details .input-box input {
             height: 45px;
-            width: 100%;
+            width: 95%;
             outline: none;
             font-size: 16px;
             border-radius: 5px;
@@ -163,75 +163,62 @@
         }
 
         .content form .user-details {
-            max-height: 300px;
             overflow-y: scroll;
         }
 
         .user-details::-webkit-scrollbar {
             width: 5px;
         }
-        }
     </style>
 </head>
 <body>
-    <!DOCTYPE html>
-    <html lang="en" dir="ltr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title> Responsive Registration Form | CodingLab </title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <div class="container">
-            <!-- Title section -->
-            <div class="title">Registration</div>
-            <div class="content">
-                <!-- Registration form -->
-                @using (Html.BeginForm("Registration", "Users", FormMethod.Post))
-                {
-                    @Html.AntiForgeryToken()
-                    @Html.ValidationSummary(true)
+    <div class="container">
+        <!-- Title section -->
+        <div class="title">Registration</div>
+        <div class="content">
+            <!-- Registration form -->
+            @using (Html.BeginForm("Registration", "Users", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
 
-                    <div class="user-details">
-                        <div class="input-box">
-                            @Html.LabelFor(m => m.FirstName)
-                            @Html.TextBoxFor(m => m.FirstName, new { placeholder = "Enter your first name" })
-                            @Html.ValidationMessageFor(m => m.FirstName)
-                        </div>
-                        <div class="input-box">
-                            @Html.LabelFor(m => m.LastName)
-                            @Html.TextBoxFor(m => m.LastName, new { placeholder = "Enter your last name" })
-                            @Html.ValidationMessageFor(m => m.LastName)
-                        </div>
-                        <div class="input-box">
-                            @Html.LabelFor(m => m.Username)
-                            @Html.TextBoxFor(m => m.Username, new { placeholder = "Enter your username" })
-                            @Html.ValidationMessageFor(m => m.Username)
-                        </div>
-                        <div class="input-box">
-                            @Html.LabelFor(m => m.Email)
-                            @Html.TextBoxFor(m => m.Email, new { placeholder = "Enter your email" })
-                            @Html.ValidationMessageFor(m => m.Email)
-                        </div>
-                        <div class="input-box">
-                            @Html.LabelFor(m => m.PhoneNumber)
-                            @Html.TextBoxFor(m => m.PhoneNumber, new { placeholder = "Enter your number" })
-                            @Html.ValidationMessageFor(m => m.PhoneNumber)
-                        </div>
-                        <div class="input-box">
-                            @Html.LabelFor(m => m.Password)
-                            @Html.PasswordFor(m => m.Password, new { placeholder = "Enter your password" })
-                            @Html.ValidationMessageFor(m => m.Password)
-                        </div>
+                <div class="user-details">
+                    <div class="input-box">
+                        @Html.LabelFor(m => m.FirstName)
+                        @Html.TextBoxFor(m => m.FirstName, new { placeholder = "Enter your first name" })
+                        @Html.ValidationMessageFor(m => m.FirstName)
                     </div>
-                    <div class="button">
-                        <input type="submit" value="Register" />
+                    <div class="input-box">
+                        @Html.LabelFor(m => m.LastName)
+                        @Html.TextBoxFor(m => m.LastName, new { placeholder = "Enter your last name" })
+                        @Html.ValidationMessageFor(m => m.LastName)
                     </div>
-                }
-            </div>
+                    <div class="input-box">
+                        @Html.LabelFor(m => m.Username)
+                        @Html.TextBoxFor(m => m.Username, new { placeholder = "Enter your username" })
+                        @Html.ValidationMessageFor(m => m.Username)
+                    </div>
+                    <div class="input-box">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { placeholder = "Enter your email" })
+                        @Html.ValidationMessageFor(m => m.Email)
+                    </div>
+                    <div class="input-box">
+                        @Html.LabelFor(m => m.PhoneNumber)
+                        @Html.TextBoxFor(m => m.PhoneNumber, new { placeholder = "Enter your number" })
+                        @Html.ValidationMessageFor(m => m.PhoneNumber)
+                    </div>
+                    <div class="input-box">
+                        @Html.LabelFor(m => m.Password)
+                        @Html.PasswordFor(m => m.Password, new { placeholder = "Enter your password" })
+                        @Html.ValidationMessageFor(m => m.Password)
+                    </div>
+                </div>
+                <div class="button">
+                    <input type="submit" value="Register" />
+                </div>
+            }
         </div>
-    </body>
-</html>
+    </div>
 </body>
 </html>

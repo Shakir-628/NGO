@@ -4,14 +4,12 @@
     Layout = null;
 }
 <!DOCTYPE html>
-<!-- Created By CodingNepal -->
 <html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <title>Login Form Design | CodeLab</title>
+    <title>NGO - Login</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
     <style>
-        <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet" >
-
         * {
             margin: 0;
             padding: 0;
@@ -19,14 +17,14 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        html, body {
-            display: grid;
-            height: 100%;
-            width: 100%;
-            place-items: center;
-            background: #f2f2f2;
-            /* background: linear-gradient(-135deg, #c850c0, #4158d0); */
-        }
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+        }   
 
         ::selection {
             background: #4158d0;
@@ -67,10 +65,11 @@
                         width: 100%;
                         outline: none;
                         font-size: 17px;
-                        padding-left: 20px;
                         border: 1px solid lightgrey;
                         border-radius: 25px;
                         transition: all 0.3s ease;
+                        /* Remove or comment out this line: margin-left: 5px; */
+                        padding: 0 20px; /* Add some horizontal padding to the input for text */
                     }
 
                         .wrapper form .field input:focus,
@@ -126,10 +125,6 @@
                 padding-left: 5px;
             }
 
-            form .content .pass-link {
-                color: "";
-            }
-
         form .field input[type="submit"] {
             color: #fff;
             border: none;
@@ -175,13 +170,13 @@
             @Html.ValidationSummary(true)
 
             <div class="field">
-                @Html.TextBoxFor(m => m.Username, new { required = "required", placeholder = "User Name" })
+                @Html.TextBoxFor(m => m.Username, new { required = "required" })
                 @Html.LabelFor(m => m.Username)
                 @Html.ValidationMessageFor(m => m.Username)
             </div>
 
             <div class="field">
-                @Html.PasswordFor(m => m.Password, new { required = "required", placeholder = "Password" })
+                @Html.PasswordFor(m => m.Password, new { required = "required" })
                 @Html.LabelFor(m => m.Password)
                 @Html.ValidationMessageFor(m => m.Password)
             </div>
@@ -195,7 +190,5 @@
             </div>
         }
     </div>
-</body>
-</html>
 </body>
 </html>
