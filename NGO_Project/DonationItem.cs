@@ -19,9 +19,9 @@ namespace NGO_Project
         public int ItemId { get; set; }
         public Nullable<decimal> Quantity { get; set; }
         public string Unit { get; set; }
+        public Nullable<System.DateTime> CreationDate { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
-        public virtual InventoryItem InventoryItem { get; set; }
-        public virtual DonationItem DonationItems1 { get; set; }
-        public virtual DonationItem DonationItem1 { get; set; }
+        public virtual Donation Donation { get; set; }
     }
 }

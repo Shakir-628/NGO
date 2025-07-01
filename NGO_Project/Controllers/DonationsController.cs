@@ -10,116 +10,120 @@ using NGO_Project;
 
 namespace NGO_Project.Controllers
 {
-    public class CashDonationsController : Controller
+    public class DonationsController : Controller
     {
         private NGOEntities db = new NGOEntities();
 
-        // GET: CashDonations
+        // GET: Donations
         public ActionResult Index()
         {
-            var cashDonations = db.CashDonations.Include(c => c.Donor).Include(c => c.User);
-            return View(cashDonations.ToList());
+            var donations = db.Donations.Include(d => d.Donor).Include(d => d.User).Include(d => d.User1);
+            return View(donations.ToList());
         }
 
-        // GET: CashDonations/Details/5
+        // GET: Donations/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CashDonation cashDonation = db.CashDonations.Find(id);
-            if (cashDonation == null)
+            Donation donation = db.Donations.Find(id);
+            if (donation == null)
             {
                 return HttpNotFound();
             }
-            return View(cashDonation);
+            return View(donation);
         }
 
-        // GET: CashDonations/Create
+        // GET: Donations/Create
         public ActionResult Create()
         {
             ViewBag.DonorId = new SelectList(db.Donors, "UserId", "FullName");
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName");
+            ViewBag.DonationId = new SelectList(db.Users, "UserId", "FirstName");
             return View();
         }
 
-        // POST: CashDonations/Create
+        // POST: Donations/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CashDonationId,DonorId,UserId,Amount,Currency,DonationDate,Notes")] CashDonation cashDonation)
+        public ActionResult Create([Bind(Include = "DonationId,DonorId,UserId,DonationDate,Notes,Status")] Donation donation)
         {
             if (ModelState.IsValid)
             {
-                db.CashDonations.Add(cashDonation);
+                db.Donations.Add(donation);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.DonorId = new SelectList(db.Donors, "UserId", "FullName", cashDonation.DonorId);
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", cashDonation.UserId);
-            return View(cashDonation);
+            ViewBag.DonorId = new SelectList(db.Donors, "UserId", "FullName", donation.DonorId);
+            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", donation.UserId);
+            ViewBag.DonationId = new SelectList(db.Users, "UserId", "FirstName", donation.DonationId);
+            return View(donation);
         }
 
-        // GET: CashDonations/Edit/5
+        // GET: Donations/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CashDonation cashDonation = db.CashDonations.Find(id);
-            if (cashDonation == null)
+            Donation donation = db.Donations.Find(id);
+            if (donation == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.DonorId = new SelectList(db.Donors, "UserId", "FullName", cashDonation.DonorId);
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", cashDonation.UserId);
-            return View(cashDonation);
+            ViewBag.DonorId = new SelectList(db.Donors, "UserId", "FullName", donation.DonorId);
+            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", donation.UserId);
+            ViewBag.DonationId = new SelectList(db.Users, "UserId", "FirstName", donation.DonationId);
+            return View(donation);
         }
 
-        // POST: CashDonations/Edit/5
+        // POST: Donations/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CashDonationId,DonorId,UserId,Amount,Currency,DonationDate,Notes")] CashDonation cashDonation)
+        public ActionResult Edit([Bind(Include = "DonationId,DonorId,UserId,DonationDate,Notes,Status")] Donation donation)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(cashDonation).State = EntityState.Modified;
+                db.Entry(donation).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.DonorId = new SelectList(db.Donors, "UserId", "FullName", cashDonation.DonorId);
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", cashDonation.UserId);
-            return View(cashDonation);
+            ViewBag.DonorId = new SelectList(db.Donors, "UserId", "FullName", donation.DonorId);
+            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", donation.UserId);
+            ViewBag.DonationId = new SelectList(db.Users, "UserId", "FirstName", donation.DonationId);
+            return View(donation);
         }
 
-        // GET: CashDonations/Delete/5
+        // GET: Donations/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CashDonation cashDonation = db.CashDonations.Find(id);
-            if (cashDonation == null)
+            Donation donation = db.Donations.Find(id);
+            if (donation == null)
             {
                 return HttpNotFound();
             }
-            return View(cashDonation);
+            return View(donation);
         }
 
-        // POST: CashDonations/Delete/5
+        // POST: Donations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            CashDonation cashDonation = db.CashDonations.Find(id);
-            db.CashDonations.Remove(cashDonation);
+            Donation donation = db.Donations.Find(id);
+            db.Donations.Remove(donation);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

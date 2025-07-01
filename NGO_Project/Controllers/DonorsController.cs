@@ -10,107 +10,107 @@ using NGO_Project;
 
 namespace NGO_Project.Controllers
 {
-    public class UserTypesController : Controller
+    public class DonorsController : Controller
     {
         private NGOEntities db = new NGOEntities();
 
-        // GET: UserTypes
+        // GET: Donors
         public ActionResult Index()
         {
-            return View(db.UserTypes.ToList());
+            return View(db.Donors.ToList());
         }
 
-        // GET: UserTypes/Details/5
+        // GET: Donors/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UserType userType = db.UserTypes.Find(id);
-            if (userType == null)
+            Donor donor = db.Donors.Find(id);
+            if (donor == null)
             {
                 return HttpNotFound();
             }
-            return View(userType);
+            return View(donor);
         }
 
-        // GET: UserTypes/Create
+        // GET: Donors/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: UserTypes/Create
+        // POST: Donors/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UsertypeId,UserType1")] UserType userType)
+        public ActionResult Create([Bind(Include = "UserId,FullName,Email,PhoneNumber,Location,PasswordHash,RegistrationDate")] Donor donor)
         {
             if (ModelState.IsValid)
             {
-                db.UserTypes.Add(userType);
+                db.Donors.Add(donor);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(userType);
+            return View(donor);
         }
 
-        // GET: UserTypes/Edit/5
+        // GET: Donors/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UserType userType = db.UserTypes.Find(id);
-            if (userType == null)
+            Donor donor = db.Donors.Find(id);
+            if (donor == null)
             {
                 return HttpNotFound();
             }
-            return View(userType);
+            return View(donor);
         }
 
-        // POST: UserTypes/Edit/5
+        // POST: Donors/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UsertypeId,UserType1")] UserType userType)
+        public ActionResult Edit([Bind(Include = "UserId,FullName,Email,PhoneNumber,Location,PasswordHash,RegistrationDate")] Donor donor)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(userType).State = EntityState.Modified;
+                db.Entry(donor).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(userType);
+            return View(donor);
         }
 
-        // GET: UserTypes/Delete/5
+        // GET: Donors/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UserType userType = db.UserTypes.Find(id);
-            if (userType == null)
+            Donor donor = db.Donors.Find(id);
+            if (donor == null)
             {
                 return HttpNotFound();
             }
-            return View(userType);
+            return View(donor);
         }
 
-        // POST: UserTypes/Delete/5
+        // POST: Donors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            UserType userType = db.UserTypes.Find(id);
-            db.UserTypes.Remove(userType);
+            Donor donor = db.Donors.Find(id);
+            db.Donors.Remove(donor);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

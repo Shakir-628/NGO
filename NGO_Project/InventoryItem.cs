@@ -14,12 +14,6 @@ namespace NGO_Project
     
     public partial class InventoryItem
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public InventoryItem()
-        {
-            this.DonationItems = new HashSet<DonationItem>();
-        }
-    
         public int ItemId { get; set; }
         public int UserId { get; set; }
         public string ItemName { get; set; }
@@ -30,8 +24,6 @@ namespace NGO_Project
         public Nullable<System.DateTime> ExpirationDate { get; set; }
         public Nullable<System.DateTime> LastUpdated { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DonationItem> DonationItems { get; set; }
         public virtual User User { get; set; }
         public virtual User User1 { get; set; }
     }

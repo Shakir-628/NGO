@@ -24,5 +24,6 @@ namespace NGO_Project
         public virtual Donor Donor { get; set; }
         public virtual User User { get; set; }
         public virtual User User1 { get; set; }
+        public virtual DonationItem DonationItem { get; set; }
     }
 }

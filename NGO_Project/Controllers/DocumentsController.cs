@@ -10,107 +10,112 @@ using NGO_Project;
 
 namespace NGO_Project.Controllers
 {
-    public class UserTypesController : Controller
+    public class DocumentsController : Controller
     {
         private NGOEntities db = new NGOEntities();
 
-        // GET: UserTypes
+        // GET: Documents
         public ActionResult Index()
         {
-            return View(db.UserTypes.ToList());
+            var documents = db.Documents.Include(d => d.User);
+            return View(documents.ToList());
         }
 
-        // GET: UserTypes/Details/5
+        // GET: Documents/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UserType userType = db.UserTypes.Find(id);
-            if (userType == null)
+            Document document = db.Documents.Find(id);
+            if (document == null)
             {
                 return HttpNotFound();
             }
-            return View(userType);
+            return View(document);
         }
 
-        // GET: UserTypes/Create
+        // GET: Documents/Create
         public ActionResult Create()
         {
+            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName");
             return View();
         }
 
-        // POST: UserTypes/Create
+        // POST: Documents/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UsertypeId,UserType1")] UserType userType)
+        public ActionResult Create([Bind(Include = "DocumentId,UserId,DocumentType,DocumentTitle,GeneratedDate,Status,RelatedEntityId,FilePath")] Document document)
         {
             if (ModelState.IsValid)
             {
-                db.UserTypes.Add(userType);
+                db.Documents.Add(document);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(userType);
+            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", document.UserId);
+            return View(document);
         }
 
-        // GET: UserTypes/Edit/5
+        // GET: Documents/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UserType userType = db.UserTypes.Find(id);
-            if (userType == null)
+            Document document = db.Documents.Find(id);
+            if (document == null)
             {
                 return HttpNotFound();
             }
-            return View(userType);
+            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", document.UserId);
+            return View(document);
         }
 
-        // POST: UserTypes/Edit/5
+        // POST: Documents/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UsertypeId,UserType1")] UserType userType)
+        public ActionResult Edit([Bind(Include = "DocumentId,UserId,DocumentType,DocumentTitle,GeneratedDate,Status,RelatedEntityId,FilePath")] Document document)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(userType).State = EntityState.Modified;
+                db.Entry(document).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(userType);
+            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", document.UserId);
+            return View(document);
         }
 
-        // GET: UserTypes/Delete/5
+        // GET: Documents/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UserType userType = db.UserTypes.Find(id);
-            if (userType == null)
+            Document document = db.Documents.Find(id);
+            if (document == null)
             {
                 return HttpNotFound();
             }
-            return View(userType);
+            return View(document);
         }
 
-        // POST: UserTypes/Delete/5
+        // POST: Documents/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            UserType userType = db.UserTypes.Find(id);
-            db.UserTypes.Remove(userType);
+            Document document = db.Documents.Find(id);
+            db.Documents.Remove(document);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

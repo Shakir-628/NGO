@@ -13,34 +13,16 @@
 </p>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.RequestTitle)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Category)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UrgencyLevel)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Location)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PostDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.User.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RequestedItem.ItemName)
-        </th>
-        <th></th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Category</th>
+        <th>Urgency</th>
+        <th>Location</th>
+        <th>Date Posted</th>
+        <th>Active</th>
+        <th>Requested By</th>
+        <th>Item Name</th>
+        <th>Action</th>
     </tr>
 
 @foreach (var item in Model) {
@@ -74,7 +56,6 @@
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.RequestId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.RequestId }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.RequestId })
         </td>
     </tr>

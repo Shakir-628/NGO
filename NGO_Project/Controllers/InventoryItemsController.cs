@@ -12,7 +12,7 @@ namespace NGO_Project.Controllers
 {
     public class InventoryItemsController : Controller
     {
-        private NGOEntities1 db = new NGOEntities1();
+        private NGOEntities db = new NGOEntities();
 
         // GET: InventoryItems
         public ActionResult Index()

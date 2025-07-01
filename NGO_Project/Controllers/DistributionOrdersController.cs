@@ -12,28 +12,45 @@ namespace NGO_Project.Controllers
 {
     public class DistributionOrdersController : Controller
     {
-        private NGOEntities1 db = new NGOEntities1();
+        private NGOEntities db = new NGOEntities();
 
         // GET: DistributionOrders
         public ActionResult Index()
         {
-            var distributionOrders = db.DistributionOrders.Include(d => d.User).Include(d => d.DistributionOrders1).Include(d => d.DistributionOrder1);
-            return View(distributionOrders.ToList());
+            try
+            {
+                var distributionOrders = db.DistributionOrders.Include(d => d.User).Include(d => d.DistributionOrders1).Include(d => d.DistributionOrder1);
+                return View(distributionOrders.ToList());
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         // GET: DistributionOrders/Details/5
+        
         public ActionResult Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                DistributionOrder distributionOrder = db.DistributionOrders.Find(id);
+                if (distributionOrder == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(distributionOrder);
             }
-            DistributionOrder distributionOrder = db.DistributionOrders.Find(id);
-            if (distributionOrder == null)
+            catch (Exception ex)
             {
-                return HttpNotFound();
+
+                throw ex;
             }
-            return View(distributionOrder);
         }
 
         // GET: DistributionOrders/Create

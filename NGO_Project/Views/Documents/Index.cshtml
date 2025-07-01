@@ -1,0 +1,70 @@
+﻿@model IEnumerable<NGO_Project.Document>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DocumentType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocumentTitle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GeneratedDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RelatedEntityId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FilePath)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User.FirstName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocumentType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocumentTitle)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GeneratedDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RelatedEntityId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FilePath)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.User.FirstName)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.DocumentId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.DocumentId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.DocumentId })
+        </td>
+    </tr>
+}
+
+</table>
