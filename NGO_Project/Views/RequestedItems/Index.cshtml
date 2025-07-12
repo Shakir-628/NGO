@@ -12,22 +12,11 @@
 </p>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ItemName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Unit)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AidRequest.RequestTitle)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AidRequest1.RequestTitle)
-        </th>
-        <th></th>
+        <th>Item Name</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+        <th>Requested For</th>
+        <th>Action</th>
     </tr>
 
 @foreach (var item in Model) {

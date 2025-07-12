@@ -23,7 +23,8 @@ namespace NGO_Project.Controllers
 
         public ActionResult Login()
         {
-            return View();
+            //return RedirectToAction("Index", "Home");
+            return View("Login");
         }
 
         // GET: Users/Details/5
@@ -50,7 +51,7 @@ namespace NGO_Project.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-
+         
 
 
         // GET: Users/Create
@@ -68,6 +69,13 @@ namespace NGO_Project.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Registration([Bind(Include = "FirstName,LastName,Username,Email,PhoneNumber,Address,UserType,Password")] User user)
         {
+
+
+            if (db.Users.Any(x => x.Username == user.Username))                    // ← CHANGED
+            {
+                ModelState.AddModelError("Username", "Username already exists. Please choose another one.");
+            }
+
             if (ModelState.IsValid)
             {
                 user.Created_Date = DateTime.Now;

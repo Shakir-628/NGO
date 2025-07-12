@@ -12,28 +12,14 @@
 </p>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.DocumentType)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DocumentTitle)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.GeneratedDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RelatedEntityId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FilePath)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.User.FirstName)
-        </th>
-        <th></th>
+        <th>Document Type</th>
+        <th>Document Title</th>
+        <th>Generated Date</th>
+        <th>Status</th>
+        <th>Related Entity ID</th>
+        <th>File Path</th>
+        <th>User First Name</th>
+        <th>Action</th>
     </tr>
 
 @foreach (var item in Model) {

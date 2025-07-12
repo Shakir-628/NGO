@@ -12,25 +12,13 @@
 </p>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.DonationDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Notes)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Donor.FullName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.User.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.User1.FirstName)
-        </th>
-        <th></th>
+        <th>Donation Date</th>
+        <th>Notes</th>
+        <th>Status</th>
+        <th>Donor Name</th>
+        <th>User First Name</th>
+        <th>Approved By</th>
+        <th>Action</th>
     </tr>
 
 @foreach (var item in Model) {
