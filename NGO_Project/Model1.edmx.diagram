@@ -4,8 +4,27 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="caaa0f9c2aae49588c25b2f7b814d18b" Name="Diagram1">
-        <EntityTypeShape EntityType="NGOModel.Login" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+      <Diagram DiagramId="6c8ac98b1c254f8583bd15e02a7c7551" Name="Diagram1">
+        <EntityTypeShape EntityType="NGOModel.AidRequest" Width="1.5" PointX="0.75" PointY="5" />
+        <EntityTypeShape EntityType="NGOModel.CashDonation" Width="1.5" PointX="8" PointY="1.125" />
+        <EntityTypeShape EntityType="NGOModel.DistributionOrderItem" Width="1.5" PointX="3" PointY="1.25" />
+        <EntityTypeShape EntityType="NGOModel.DistributionOrder" Width="1.5" PointX="0.75" PointY="1" />
+        <EntityTypeShape EntityType="NGOModel.Document" Width="1.5" PointX="2.75" PointY="8.75" />
+        <EntityTypeShape EntityType="NGOModel.DonationItem" Width="1.5" PointX="10.25" PointY="4.375" />
+        <EntityTypeShape EntityType="NGOModel.Donation" Width="1.5" PointX="8" PointY="4.375" />
+        <EntityTypeShape EntityType="NGOModel.Donor" Width="1.5" PointX="5.75" PointY="2.625" />
+        <EntityTypeShape EntityType="NGOModel.InventoryItem" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="NGOModel.RequestedItem" Width="1.5" PointX="3" PointY="5.375" />
+        <AssociationConnector Association="NGOModel.FK__Requested__Reque__7C4F7684" />
+        <AssociationConnector Association="NGOModel.FK_RequestedItems_AidRequests" />
+        <AssociationConnector Association="NGOModel.FK__CashDonat__Donor__5070F446" />
+        <AssociationConnector Association="NGOModel.FK__Distribut__Distr__6E01572D" />
+        <AssociationConnector Association="NGOModel.FK_DistributionOrders_DistributionOrders" />
+        <AssociationConnector Association="NGOModel.FK_DonationItems_Donations" />
+        <AssociationConnector Association="NGOModel.FK__Donations__Donor__571DF1D5" />
+        <EntityTypeShape EntityType="NGOModel.UserType" Width="1.5" PointX="5.75" PointY="8.875" />
+        <EntityTypeShape EntityType="NGOModel.User" Width="1.5" PointX="8" PointY="8" />
+        <AssociationConnector Association="NGOModel.FK_Users_UserType" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

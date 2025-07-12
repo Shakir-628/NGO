@@ -142,7 +142,7 @@
                 @using (Html.BeginForm("Login", "Users", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.Hidden("UserType", "Donor")
+                    @Html.Hidden("Type", "Donor")
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.Username)
@@ -161,7 +161,7 @@
                 @using (Html.BeginForm("Login", "Users", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.Hidden("UserType", "NGO")
+                    @Html.Hidden("Type", "NGO")
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.Username)

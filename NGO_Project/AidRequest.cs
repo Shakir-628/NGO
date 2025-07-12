@@ -30,10 +30,8 @@ namespace NGO_Project
         public Nullable<System.DateTime> PostDate { get; set; }
         public Nullable<bool> IsActive { get; set; }
     
-        public virtual User User { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RequestedItem> RequestedItems { get; set; }
-        public virtual User User1 { get; set; }
         public virtual RequestedItem RequestedItem { get; set; }
     }
 }

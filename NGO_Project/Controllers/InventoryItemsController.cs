@@ -17,7 +17,7 @@ namespace NGO_Project.Controllers
         // GET: InventoryItems
         public ActionResult Index()
         {
-            var inventoryItems = db.InventoryItems.Include(i => i.User).Include(i => i.User1);
+            var inventoryItems = db.InventoryItems;
             return View(inventoryItems.ToList());
         }
 

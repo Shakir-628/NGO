@@ -29,7 +29,6 @@ namespace NGO_Project
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DistributionOrderItem> DistributionOrderItems { get; set; }
-        public virtual User User { get; set; }
         public virtual DistributionOrder DistributionOrders1 { get; set; }
         public virtual DistributionOrder DistributionOrder1 { get; set; }
     }

@@ -22,7 +22,5 @@ namespace NGO_Project
         public string Status { get; set; }
         public int RelatedEntityId { get; set; }
         public string FilePath { get; set; }
-    
-        public virtual User User { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace NGO_Project.Controllers
         {
             try
             {
-                var distributionOrders = db.DistributionOrders.Include(d => d.User).Include(d => d.DistributionOrders1).Include(d => d.DistributionOrder1);
+                var distributionOrders = db.DistributionOrders.Include(d => d.DistributionOrders1).Include(d => d.DistributionOrder1);
                 return View(distributionOrders.ToList());
             }
             catch (Exception ex)

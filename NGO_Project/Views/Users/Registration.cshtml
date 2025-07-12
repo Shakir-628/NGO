@@ -28,11 +28,12 @@
                     {
                         @Html.AntiForgeryToken()
 
-                        <div class="mb-3">
-                            <label class="form-label">Account Type</label>
-                            @Html.DropDownList("UserType", null, "Select Account Type", new { @class = "form-select", required = "required" })
-                            @Html.ValidationMessageFor(m => m.UserType, "", new { @class = "text-danger" })
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label">Account Type</label>
+                    @Html.DropDownListFor(m => m.Type, (IEnumerable<SelectListItem>)ViewBag.UserTypelist, "Select Account Type", new { @class = "form-select", required = "required" })
+
+                    @Html.ValidationMessageFor(m => m.Type, "", new { @class = "text-danger" })
+                </div>
 
                         <div class="mb-3">
                             @Html.LabelFor(m => m.FirstName, new { @class = "form-label" })

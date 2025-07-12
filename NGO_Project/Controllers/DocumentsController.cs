@@ -17,7 +17,7 @@ namespace NGO_Project.Controllers
         // GET: Documents
         public ActionResult Index()
         {
-            var documents = db.Documents.Include(d => d.User);
+            var documents = db.Documents;
             return View(documents.ToList());
         }
 

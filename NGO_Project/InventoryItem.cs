@@ -23,8 +23,5 @@ namespace NGO_Project
         public string QualityCheckStatus { get; set; }
         public Nullable<System.DateTime> ExpirationDate { get; set; }
         public Nullable<System.DateTime> LastUpdated { get; set; }
-    
-        public virtual User User { get; set; }
-        public virtual User User1 { get; set; }
     }
 }

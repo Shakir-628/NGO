@@ -23,6 +23,5 @@ namespace NGO_Project
         public string Notes { get; set; }
     
         public virtual Donor Donor { get; set; }
-        public virtual User User { get; set; }
     }
 }

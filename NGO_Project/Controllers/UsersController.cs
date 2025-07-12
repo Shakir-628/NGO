@@ -17,7 +17,7 @@ namespace NGO_Project.Controllers
         // GET: Users
         public ActionResult Index()
         {
-            var users = db.Users.Include(u => u.Donation).Include(u => u.UserType1);
+            var users = db.Users.Include(u => u.UserType);
             return View(users.ToList());
         }
 
@@ -58,7 +58,7 @@ namespace NGO_Project.Controllers
         public ActionResult Registration()
         {
             ViewBag.UserId = new SelectList(db.Donations, "DonationId", "Notes");
-            ViewBag.UserType = new SelectList(db.UserTypes, "UsertypeId", "UserType1");
+            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
             return View();
         }
 
@@ -67,11 +67,9 @@ namespace NGO_Project.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Registration([Bind(Include = "FirstName,LastName,Username,Email,PhoneNumber,Address,UserType,Password")] User user)
+        public ActionResult Registration([Bind(Include = "FirstName,LastName,Username,Email,PhoneNumber,Address,Type,Password")] User user)
         {
-
-
-            if (db.Users.Any(x => x.Username == user.Username))                    // ← CHANGED
+            if (db.Users.Any(x => x.Username == user.Username))
             {
                 ModelState.AddModelError("Username", "Username already exists. Please choose another one.");
             }
@@ -86,7 +84,7 @@ namespace NGO_Project.Controllers
             }
 
             ViewBag.UserId = new SelectList(db.Donations, "DonationId", "Notes", user.UserId);
-            ViewBag.UserType = new SelectList(db.UserTypes, "UsertypeId", "UserType1", user.UserType);
+            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
             return View(user);
         }
 
@@ -103,7 +101,7 @@ namespace NGO_Project.Controllers
                 return HttpNotFound();
             }
             ViewBag.UserId = new SelectList(db.Donations, "DonationId", "Notes", user.UserId);
-            ViewBag.UserType = new SelectList(db.UserTypes, "UsertypeId", "UserType1", user.UserType);
+            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
             return View(user);
         }
 
@@ -121,7 +119,7 @@ namespace NGO_Project.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.UserId = new SelectList(db.Donations, "DonationId", "Notes", user.UserId);
-            ViewBag.UserType = new SelectList(db.UserTypes, "UsertypeId", "UserType1", user.UserType);
+            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
             return View(user);
         }
 

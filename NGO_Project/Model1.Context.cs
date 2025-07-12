@@ -25,6 +25,17 @@ namespace NGO_Project
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Login> Logins { get; set; }
+        public virtual DbSet<AidRequest> AidRequests { get; set; }
+        public virtual DbSet<CashDonation> CashDonations { get; set; }
+        public virtual DbSet<DistributionOrderItem> DistributionOrderItems { get; set; }
+        public virtual DbSet<DistributionOrder> DistributionOrders { get; set; }
+        public virtual DbSet<Document> Documents { get; set; }
+        public virtual DbSet<DonationItem> DonationItems { get; set; }
+        public virtual DbSet<Donation> Donations { get; set; }
+        public virtual DbSet<Donor> Donors { get; set; }
+        public virtual DbSet<InventoryItem> InventoryItems { get; set; }
+        public virtual DbSet<RequestedItem> RequestedItems { get; set; }
+        public virtual DbSet<UserType> UserTypes { get; set; }
+        public virtual DbSet<User> Users { get; set; }
     }
 }
