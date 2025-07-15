@@ -25,6 +25,10 @@ namespace NGO_Project
         public string Password { get; set; }
         public Nullable<System.DateTime> Created_Date { get; set; }
         public Nullable<System.DateTime> Updated_Date { get; set; }
+        public string CNIC { get; set; }
+        public Nullable<bool> isLock { get; set; }
+        public int LockCount { get; set; }
+        public string City { get; set; }
     
         public virtual UserType UserType { get; set; }
     }

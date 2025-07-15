@@ -8,7 +8,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Login - GC&ASMS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -145,12 +147,20 @@
                     @Html.Hidden("Type", "Donor")
 
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Username)
-                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "" })
+                        @Html.Label("User Name")
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", maxlength = "30", minlength = "10" })
                     </div>
+
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Password)
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "••••••••" })
+                        @Html.Label("Password")
+                        <div class="input-group">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "••••••••", maxlength = "30", minlength = "10", id = "Password" })
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="togglePassword" style="cursor: pointer; user-select:none;">
+                                    <i id="eyeIcon" class="fa fa-eye" aria-hidden="true" title="Show Password"></i>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="login-button">Login</button>
                 }
@@ -164,12 +174,20 @@
                     @Html.Hidden("Type", "NGO")
 
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Username)
-                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "" })
+                        @Html.Label("User Name")
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", maxlength = "30", minlength = "10" })
                     </div>
+
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Password)
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "••••••••" })
+                        @Html.Label("Password")
+                        <div class="input-group">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "••••••••", maxlength = "15", minlength = "10", id = "NGOPassword" })
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="toggleNGOPassword" style="cursor: pointer; user-select:none;">
+                                    <i id="ngoEyeIcon" class="fa fa-eye" aria-hidden="true" title="Show Password"></i>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="login-button">Login</button>
                 }
@@ -182,6 +200,7 @@
     </div>
 
     <script>
+        // Toggle tab content
         document.querySelectorAll(".tab-button").forEach(button => {
             button.addEventListener("click", () => {
                 document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
@@ -190,6 +209,26 @@
                 button.classList.add("active");
                 document.getElementById(button.dataset.tab + "-content").classList.add("active");
             });
+        });
+
+        // Donor password toggle
+        document.getElementById('togglePassword')?.addEventListener('click', function () {
+            const input = document.getElementById('Password');
+            const icon = document.getElementById('eyeIcon');
+
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+
+        // NGO password toggle
+        document.getElementById('toggleNGOPassword')?.addEventListener('click', function () {
+            const input = document.getElementById('NGOPassword');
+            const icon = document.getElementById('ngoEyeIcon');
+
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
         });
     </script>
 </body>

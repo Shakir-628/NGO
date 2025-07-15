@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using NGO_Project;
 
@@ -17,124 +14,153 @@ namespace NGO_Project.Controllers
         // GET: Users
         public ActionResult Index()
         {
-            var users = db.Users.Include(u => u.UserType);
+            var users = db.Users;
             return View(users.ToList());
         }
 
+        // GET: Users/Login
         public ActionResult Login()
         {
-            //return RedirectToAction("Index", "Home");
             return View("Login");
+        }
+
+        // POST: Users/Login
+        [HttpPost]
+        public ActionResult Login(User user)
+        {
+            var existingUser = db.Users
+                .FirstOrDefault(x => x.Username == user.Username && x.Password == user.Password);
+
+            if (existingUser == null)
+            {
+                ModelState.AddModelError("", "Invalid username or password.");
+                return View("Login");
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Users/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             User user = db.Users.Find(id);
             if (user == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(user);
         }
-        [HttpPost]
-        public ActionResult Login(User user)
-        {
-            User users = db.Users.Where(x=>x.Username == user.Username && x.Password == user.Password).FirstOrDefault();
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return RedirectToAction("Index", "Home");
-        }
-         
 
-
-        // GET: Users/Create
+        // GET: Users/Registration
         public ActionResult Registration()
         {
-            ViewBag.UserId = new SelectList(db.Donations, "DonationId", "Notes");
             ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
             return View();
         }
 
-        // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Users/Registration
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Registration([Bind(Include = "FirstName,LastName,Username,Email,PhoneNumber,Address,Type,Password")] User user)
+        public ActionResult Registration([Bind(Include = "FirstName,LastName,Username,Email,PhoneNumber,Address,City,CNIC,Type,Password")] User user)
         {
+            // Check if username exists
             if (db.Users.Any(x => x.Username == user.Username))
-            {
                 ModelState.AddModelError("Username", "Username already exists. Please choose another one.");
-            }
 
-            if (ModelState.IsValid)
+            // Check if email exists
+            if (db.Users.Any(x => x.Email == user.Email))
+                ModelState.AddModelError("Email", "Email already exists. Please use another one.");
+
+            if (!ModelState.IsValid)
             {
-                user.Created_Date = DateTime.Now;
-                user.Updated_Date = DateTime.Now;
-                db.Users.Add(user);
-                db.SaveChanges();
-                return RedirectToAction("Login");
+                ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type", user.Type);
+                return View(user);
             }
 
-            ViewBag.UserId = new SelectList(db.Donations, "DonationId", "Notes", user.UserId);
-            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
-            return View(user);
+            user.Created_Date = DateTime.Now;
+            user.Updated_Date = DateTime.Now;
+
+            db.Users.Add(user);
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                foreach (var validationErrors in ex.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        ModelState.AddModelError(validationError.PropertyName, validationError.ErrorMessage);
+                    }
+                }
+                ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type", user.Type);
+                return View(user);
+            }
+
+            return RedirectToAction("Login");
         }
 
         // GET: Users/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             User user = db.Users.Find(id);
             if (user == null)
-            {
                 return HttpNotFound();
-            }
-            ViewBag.UserId = new SelectList(db.Donations, "DonationId", "Notes", user.UserId);
-            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
+
+            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type", user.Type);
             return View(user);
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserId,FirstName,LastName,Username,Email,PhoneNumber,Address,UserType,Password,Created_Date,Updated_Date")] User user)
+        public ActionResult Edit([Bind(Include = "UserId,FirstName,LastName,Username,Email,PhoneNumber,Address,City,CNIC,Type,Password,Created_Date,Updated_Date")] User user)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                db.Entry(user).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type", user.Type);
+                return View(user);
             }
-            ViewBag.UserId = new SelectList(db.Donations, "DonationId", "Notes", user.UserId);
-            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
-            return View(user);
+
+            user.Updated_Date = DateTime.Now;
+            db.Entry(user).State = EntityState.Modified;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                foreach (var validationErrors in ex.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        ModelState.AddModelError(validationError.PropertyName, validationError.ErrorMessage);
+                    }
+                }
+                ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type", user.Type);
+                return View(user);
+            }
+
+            return RedirectToAction("Index");
         }
 
         // GET: Users/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             User user = db.Users.Find(id);
             if (user == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(user);
         }
 
@@ -152,9 +178,8 @@ namespace NGO_Project.Controllers
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 db.Dispose();
-            }
+
             base.Dispose(disposing);
         }
     }
