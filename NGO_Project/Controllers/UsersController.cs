@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using NGO_Project;
+using NGO_Project.Libs; // Import encryption helper
 
 namespace NGO_Project.Controllers
 {
@@ -28,8 +29,10 @@ namespace NGO_Project.Controllers
         [HttpPost]
         public ActionResult Login(User user)
         {
+            var encryptedPassword = Encryption.Encrypt(user.Password);
+
             var existingUser = db.Users
-                .FirstOrDefault(x => x.Username == user.Username && x.Password == user.Password);
+                .FirstOrDefault(x => x.Username == user.Username && x.Password == encryptedPassword);
 
             if (existingUser == null)
             {
@@ -60,16 +63,13 @@ namespace NGO_Project.Controllers
             return View();
         }
 
-        // POST: Users/Registration
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Registration([Bind(Include = "FirstName,LastName,Username,Email,PhoneNumber,Address,City,CNIC,Type,Password")] User user)
         {
-            // Check if username exists
             if (db.Users.Any(x => x.Username == user.Username))
                 ModelState.AddModelError("Username", "Username already exists. Please choose another one.");
 
-            // Check if email exists
             if (db.Users.Any(x => x.Email == user.Email))
                 ModelState.AddModelError("Email", "Email already exists. Please use another one.");
 
@@ -79,6 +79,7 @@ namespace NGO_Project.Controllers
                 return View(user);
             }
 
+            user.Password = Encryption.Encrypt(user.Password);
             user.Created_Date = DateTime.Now;
             user.Updated_Date = DateTime.Now;
 
@@ -100,6 +101,7 @@ namespace NGO_Project.Controllers
                 return View(user);
             }
 
+            TempData["SuccessMessage"] = "Account created successfully!";
             return RedirectToAction("Login");
         }
 
@@ -128,6 +130,7 @@ namespace NGO_Project.Controllers
                 return View(user);
             }
 
+            user.Password = Encryption.Encrypt(user.Password);
             user.Updated_Date = DateTime.Now;
             db.Entry(user).State = EntityState.Modified;
 

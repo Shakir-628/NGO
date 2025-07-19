@@ -3,14 +3,19 @@
 @{
     Layout = null;
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - GC&ASMS</title>
+    <title>Login - Helping Hands</title>
+    <link rel="icon" type="image/png" href="~/assets/img/logo/HelpingHands.png" />
+
+    <!-- Fonts & Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -32,13 +37,23 @@
             width: 100%;
         }
 
+        .header-section {
+            text-align: center;
+        }
+
+        .logo-wrapper img {
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
         .header-section h1 {
-            font-size: 2.2em;
+            font-size: 1.8em;
             color: #007bff;
+            margin-top: 0;
         }
 
         .header-section h2 {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #495057;
         }
 
@@ -86,12 +101,11 @@
                 font-weight: bold;
             }
 
-            .form-group input {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ced4da;
-                border-radius: 5px;
-            }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+        }
 
         .login-button {
             width: 100%;
@@ -111,6 +125,7 @@
         .signup-link {
             margin-top: 20px;
             font-size: 0.95em;
+            text-align: center;
         }
 
             .signup-link a {
@@ -121,12 +136,19 @@
                 .signup-link a:hover {
                     text-decoration: underline;
                 }
+
+        .text-danger {
+            font-size: 0.85em;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header-section text-center mb-4">
-            <h1>Goodwill Contribution & Aid Management System</h1>
+        <div class="header-section mb-4">
+            <div class="logo-wrapper d-flex justify-content-center">
+                <img src="~/assets/img/logo/HelpingHands.jpg" alt="Logo" />
+            </div>
+            <h1 class="text-success fw-bold">Helping Hands</h1>
             <h2>Bridging the gap between community needs and donor contributions</h2>
             <p>Your platform for seamless aid management.</p>
         </div>
@@ -134,21 +156,23 @@
         <div class="login-card">
             <h3 class="text-center">Login</h3>
 
+            <!-- Toggle Buttons -->
             <div class="tab-buttons">
-                <button class="tab-button active" data-tab="donor">Donor</button>
-                <button class="tab-button" data-tab="ngo">NGO</button>
+                <button class="tab-button btn-success active" data-tab="donor">Donor</button>
+                <button class="tab-button btn-success" data-tab="ngo">NGO</button>
             </div>
 
             <!-- Donor Login Form -->
             <div id="donor-content" class="tab-content active">
-                @using (Html.BeginForm("Login", "Users", FormMethod.Post))
+                @using (Html.BeginForm("Login", "Users", FormMethod.Post, new { id = "donorForm" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.Hidden("Type", "Donor")
 
                     <div class="form-group">
                         @Html.Label("User Name")
-                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", maxlength = "30", minlength = "10" })
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", id = "Username", maxlength = "30", minlength = "10" })
+                        <span class="text-danger" id="donorUsernameError"></span>
                     </div>
 
                     <div class="form-group">
@@ -156,26 +180,29 @@
                         <div class="input-group">
                             @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "••••••••", maxlength = "30", minlength = "10", id = "Password" })
                             <div class="input-group-append">
-                                <span class="input-group-text" id="togglePassword" style="cursor: pointer; user-select:none;">
-                                    <i id="eyeIcon" class="fa fa-eye" aria-hidden="true" title="Show Password"></i>
+                                <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                                    <i id="eyeIcon" class="fa fa-eye"></i>
                                 </span>
                             </div>
                         </div>
+                        <span class="text-danger" id="donorPasswordError"></span>
                     </div>
+
                     <button type="submit" class="login-button">Login</button>
                 }
             </div>
 
             <!-- NGO Login Form -->
             <div id="ngo-content" class="tab-content">
-                @using (Html.BeginForm("Login", "Users", FormMethod.Post))
+                @using (Html.BeginForm("Login", "Users", FormMethod.Post, new { id = "ngoForm" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.Hidden("Type", "NGO")
 
                     <div class="form-group">
                         @Html.Label("User Name")
-                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", maxlength = "30", minlength = "10" })
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", id = "NGOUsername", maxlength = "30", minlength = "10" })
+                        <span class="text-danger" id="ngoUsernameError"></span>
                     </div>
 
                     <div class="form-group">
@@ -183,12 +210,14 @@
                         <div class="input-group">
                             @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "••••••••", maxlength = "15", minlength = "10", id = "NGOPassword" })
                             <div class="input-group-append">
-                                <span class="input-group-text" id="toggleNGOPassword" style="cursor: pointer; user-select:none;">
-                                    <i id="ngoEyeIcon" class="fa fa-eye" aria-hidden="true" title="Show Password"></i>
+                                <span class="input-group-text" id="toggleNGOPassword" style="cursor: pointer;">
+                                    <i id="ngoEyeIcon" class="fa fa-eye"></i>
                                 </span>
                             </div>
                         </div>
+                        <span class="text-danger" id="ngoPasswordError"></span>
                     </div>
+
                     <button type="submit" class="login-button">Login</button>
                 }
             </div>
@@ -198,9 +227,8 @@
             </div>
         </div>
     </div>
-
     <script>
-        // Toggle tab content
+        // Tab Switching
         document.querySelectorAll(".tab-button").forEach(button => {
             button.addEventListener("click", () => {
                 document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
@@ -211,25 +239,77 @@
             });
         });
 
-        // Donor password toggle
-        document.getElementById('togglePassword')?.addEventListener('click', function () {
-            const input = document.getElementById('Password');
-            const icon = document.getElementById('eyeIcon');
+        // Toggle Passwords
+        const togglePassword = (toggleId, inputId, iconId) => {
+            document.getElementById(toggleId)?.addEventListener("click", () => {
+                const input = document.getElementById(inputId);
+                const icon = document.getElementById(iconId);
+                input.type = input.type === "password" ? "text" : "password";
+                icon.classList.toggle("fa-eye");
+                icon.classList.toggle("fa-eye-slash");
+            });
+        };
 
-            input.type = input.type === 'password' ? 'text' : 'password';
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
+        togglePassword("togglePassword", "Password", "eyeIcon");
+        togglePassword("toggleNGOPassword", "NGOPassword", "ngoEyeIcon");
+
+        // ✅ FIXED: Form Validation
+        function validateForm(usernameId, passwordId, userErrorId, passErrorId) {
+            const username = document.getElementById(usernameId).value.trim();
+            const password = document.getElementById(passwordId).value.trim();
+            const userError = document.getElementById(userErrorId);
+            const passError = document.getElementById(passErrorId);
+            let isValid = true;
+
+            userError.innerText = "";
+            passError.innerText = "";
+
+            if (username.length < 5 || username.length > 20) {
+                userError.innerText = "Username must be 5-20 characters.";
+                isValid = false;
+            }
+
+            if (password.length < 6 || password.length > 20) {
+                passError.innerText = "Password must be 6-20 characters.";
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        document.getElementById("donorForm").addEventListener("submit", function (e) {
+            if (!validateForm("Username", "Password", "donorUsernameError", "donorPasswordError")) {
+                e.preventDefault();
+            }
         });
 
-        // NGO password toggle
-        document.getElementById('toggleNGOPassword')?.addEventListener('click', function () {
-            const input = document.getElementById('NGOPassword');
-            const icon = document.getElementById('ngoEyeIcon');
+        document.getElementById("ngoForm").addEventListener("submit", function (e) {
+            if (!validateForm("NGOUsername", "NGOPassword", "ngoUsernameError", "ngoPasswordError")) {
+                e.preventDefault();
+            }
+        });
+        document.querySelectorAll(".tab-button").forEach(button => {
+            button.addEventListener("click", () => {
+                // Remove "active" class from all buttons and tab contents
+                document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
+                document.querySelectorAll(".tab-content").forEach(content => {
+                    content.classList.remove("active");
 
-            input.type = input.type === 'password' ? 'text' : 'password';
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
+                    // ✅ Clear form inputs in the tab being hidden
+                    const form = content.querySelector("form");
+                    if (form) form.reset();
+
+                    // ✅ Clear validation errors (optional)
+                    const errorSpans = content.querySelectorAll(".text-danger");
+                    errorSpans.forEach(span => span.innerText = "");
+                });
+
+                // Add "active" class to clicked button and corresponding tab content
+                button.classList.add("active");
+                document.getElementById(button.dataset.tab + "-content").classList.add("active");
+            });
         });
     </script>
+
 </body>
 </html>

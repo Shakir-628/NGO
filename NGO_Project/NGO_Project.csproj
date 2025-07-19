@@ -171,6 +171,7 @@
     <Compile Include="InventoryItem.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Libs\Encryption.cs" />
     <Compile Include="Model1.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -206,14 +207,12 @@
     <Content Include="assets\css\kaiadmin.min.css" />
     <Content Include="assets\css\plugins.css" />
     <Content Include="assets\css\plugins.min.css" />
+    <Content Include="assets\css\select2.css" />
+    <Content Include="assets\css\select2.min.css" />
     <Content Include="assets\fonts\fontawesome\fa-brands-400.svg" />
     <Content Include="assets\fonts\fontawesome\fa-regular-400.svg" />
     <Content Include="assets\fonts\fontawesome\fa-solid-900.svg" />
     <Content Include="assets\fonts\simple-line-icons\Simple-Line-Icons.svg" />
-    <Content Include="assets\img\arashmil.jpg" />
-    <Content Include="assets\img\bg-404.jpeg" />
-    <Content Include="assets\img\blogpost.jpg" />
-    <Content Include="assets\img\chadengle.jpg" />
     <Content Include="assets\img\examples\example1-300x300.jpg" />
     <Content Include="assets\img\examples\example1.jpeg" />
     <Content Include="assets\img\examples\example10-300x300.jpg" />
@@ -501,8 +500,6 @@
     <Content Include="assets\img\flags\za.png" />
     <Content Include="assets\img\flags\zm.png" />
     <Content Include="assets\img\flags\zw.png" />
-    <Content Include="assets\img\img-shadow.png" />
-    <Content Include="assets\img\jm_denis.jpg" />
     <Content Include="assets\img\kaiadmin\demo1.png" />
     <Content Include="assets\img\kaiadmin\demo2.png" />
     <Content Include="assets\img\kaiadmin\demo3.png" />
@@ -522,14 +519,7 @@
     <Content Include="assets\img\kaiadmin\logo_documentation.png" />
     <Content Include="assets\img\kaiadmin\logo_light.png" />
     <Content Include="assets\img\kaiadmin\logo_light.svg" />
-    <Content Include="assets\img\logoproduct.svg" />
-    <Content Include="assets\img\logoproduct2.svg" />
-    <Content Include="assets\img\logoproduct3.svg" />
-    <Content Include="assets\img\mlane.jpg" />
-    <Content Include="assets\img\profile.jpg" />
-    <Content Include="assets\img\profile2.jpg" />
-    <Content Include="assets\img\sauro.jpg" />
-    <Content Include="assets\img\talha.jpg" />
+    <Content Include="assets\img\logo\HelpingHands.jpg" />
     <Content Include="assets\img\undraw\undraw_blank_canvas_3rbb.svg" />
     <Content Include="assets\img\undraw\undraw_creative_team_r90h.svg" />
     <Content Include="assets\img\undraw\undraw_empty_xct9.svg" />
@@ -542,11 +532,11 @@
     <Content Include="assets\img\undraw\undraw_Taken_if77.svg" />
     <Content Include="assets\img\undraw\undraw_update_uxn2.svg" />
     <Content Include="assets\img\undraw\undraw_upgrade_06a0.svg" />
-    <Content Include="assets\img\visa.svg" />
     <Content Include="assets\js\core\bootstrap.min.js" />
     <Content Include="assets\js\core\jquery-3.7.1.min.js" />
     <Content Include="assets\js\core\popper.min.js" />
     <Content Include="assets\js\demo.js" />
+    <Content Include="assets\js\emailVailidation.js" />
     <Content Include="assets\js\kaiadmin.js" />
     <Content Include="assets\js\kaiadmin.min.js" />
     <Content Include="assets\js\plugin\bootstrap-notify\bootstrap-notify.min.js" />
@@ -576,6 +566,8 @@
     <Content Include="assets\js\plugin\summernote\summernote-lite.min.js" />
     <Content Include="assets\js\plugin\sweetalert\sweetalert.min.js" />
     <Content Include="assets\js\plugin\webfont\webfont.min.js" />
+    <Content Include="assets\js\select2.js" />
+    <Content Include="assets\js\select2.min.js" />
     <Content Include="assets\js\setting-demo.js" />
     <Content Include="assets\js\setting-demo2.js" />
     <Content Include="Content\bootstrap-grid.css" />
