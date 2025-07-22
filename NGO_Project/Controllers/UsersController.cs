@@ -31,45 +31,52 @@ namespace NGO_Project.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(User user, string Type)
         {
-            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
-
-            if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
+            try
             {
-                ModelState.AddModelError("", "Username and Password are required.");
-                return View();
-            }
+                ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
 
-            if (string.IsNullOrWhiteSpace(Type))
+                if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
+                {
+                    ModelState.AddModelError("", "Username and Password are required.");
+                    return View();
+                }
+
+                if (string.IsNullOrWhiteSpace(Type))
+                {
+                    ModelState.AddModelError("Type", "Please select a user type.");
+                    return View();
+                }
+
+                var userType = db.UserTypes.FirstOrDefault(x => x.Type == Type);
+                if (userType == null)
+                {
+                    ModelState.AddModelError("Type", "Invalid user type selected.");
+                    return View();
+                }
+
+                var existingUser = db.Users.FirstOrDefault(x =>
+                    x.Username == user.Username &&
+                    x.Password == user.Password &&
+                    x.Type == userType.TypeId
+                );
+
+                if (existingUser == null)
+                {
+                    ModelState.AddModelError("", "Invalid username, password, or user type.");
+                    return View();
+                }
+
+                Session["UserId"] = existingUser.UserId;
+                Session["Username"] = existingUser.Username;
+                Session["UserType"] = existingUser.Type;
+                Session["FullName"] = $"{existingUser.FirstName} {existingUser.LastName}";
+
+                return RedirectToAction("Dashboard");
+            }
+            catch (Exception)
             {
-                ModelState.AddModelError("Type", "Please select a user type.");
-                return View();
+                throw;
             }
-
-            var userType = db.UserTypes.FirstOrDefault(x => x.Type == Type);
-            if (userType == null)
-            {
-                ModelState.AddModelError("Type", "Invalid user type selected.");
-                return View();
-            }
-
-            var existingUser = db.Users.FirstOrDefault(x =>
-                x.Username == user.Username &&
-                x.Password == user.Password &&
-                x.Type == userType.TypeId
-            );
-
-            if (existingUser == null)
-            {
-                ModelState.AddModelError("", "Invalid username, password, or user type.");
-                return View();
-            }
-
-            Session["UserId"] = existingUser.UserId;
-            Session["Username"] = existingUser.Username;
-            Session["UserType"] = existingUser.Type;
-            Session["FullName"] = $"{existingUser.FirstName} {existingUser.LastName}";
-
-            return RedirectToAction("Dashboard");
         }
 
         public ActionResult Dashboard()
