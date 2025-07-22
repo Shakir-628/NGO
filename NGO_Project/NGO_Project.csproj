@@ -1127,6 +1127,8 @@
     <Content Include="Views\RequestedItems\Create.cshtml" />
     <Content Include="Views\RequestedItems\Edit.cshtml" />
     <Content Include="Views\RequestedItems\Index.cshtml" />
+    <Content Include="Views\Users\NGODashboard.cshtml" />
+    <Content Include="Views\Users\DonorDashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

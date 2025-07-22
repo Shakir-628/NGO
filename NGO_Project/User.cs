@@ -29,6 +29,7 @@ namespace NGO_Project
         public Nullable<bool> isLock { get; set; }
         public int LockCount { get; set; }
         public string City { get; set; }
+        public string Title { get; set; }
     
         public virtual UserType UserType { get; set; }
     }

@@ -23,7 +23,7 @@
         <AssociationConnector Association="NGOModel.FK_DonationItems_Donations" />
         <AssociationConnector Association="NGOModel.FK__Donations__Donor__571DF1D5" />
         <EntityTypeShape EntityType="NGOModel.UserType" Width="1.5" PointX="5.75" PointY="8.875" />
-        <EntityTypeShape EntityType="NGOModel.User" Width="1.5" PointX="8" PointY="8" />
+        <EntityTypeShape EntityType="NGOModel.User" Width="1.5" PointX="8" PointY="8.5" />
         <AssociationConnector Association="NGOModel.FK_Users_UserType" />
       </Diagram>
     </edmx:Diagrams>

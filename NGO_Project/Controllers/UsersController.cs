@@ -2,7 +2,9 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Web.Mvc;
+using System.ComponentModel.DataAnnotations; // For email validation
 using NGO_Project;
 
 namespace NGO_Project.Controllers
@@ -14,30 +16,103 @@ namespace NGO_Project.Controllers
         // GET: Users
         public ActionResult Index()
         {
-            var users = db.Users;
-            return View(users.ToList());
+            return View(db.Users.ToList());
         }
 
         // GET: Users/Login
         public ActionResult Login()
         {
-            return View("Login");
+            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
+            return View();
         }
 
         // POST: Users/Login
         [HttpPost]
-        public ActionResult Login(User user)
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(User user, string Type)
         {
-            var existingUser = db.Users
-                .FirstOrDefault(x => x.Username == user.Username && x.Password == user.Password);
+            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
+
+            if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
+            {
+                ModelState.AddModelError("", "Username and Password are required.");
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(Type))
+            {
+                ModelState.AddModelError("Type", "Please select a user type.");
+                return View();
+            }
+
+            var userType = db.UserTypes.FirstOrDefault(x => x.Type == Type);
+            if (userType == null)
+            {
+                ModelState.AddModelError("Type", "Invalid user type selected.");
+                return View();
+            }
+
+            var existingUser = db.Users.FirstOrDefault(x =>
+                x.Username == user.Username &&
+                x.Password == user.Password &&
+                x.Type == userType.TypeId
+            );
 
             if (existingUser == null)
             {
-                ModelState.AddModelError("", "Invalid username or password.");
-                return View("Login");
+                ModelState.AddModelError("", "Invalid username, password, or user type.");
+                return View();
             }
 
-            return RedirectToAction("Index", "Home");
+            Session["UserId"] = existingUser.UserId;
+            Session["Username"] = existingUser.Username;
+            Session["UserType"] = existingUser.Type;
+            Session["FullName"] = $"{existingUser.FirstName} {existingUser.LastName}";
+
+            return RedirectToAction("Dashboard");
+        }
+
+        public ActionResult Dashboard()
+        {
+            if (Session["UserId"] == null)
+                return RedirectToAction("Login");
+
+            int typeId = Convert.ToInt32(Session["UserType"]);
+            var userType = db.UserTypes.FirstOrDefault(u => u.TypeId == typeId)?.Type;
+
+            if (userType == "Donor")
+                return RedirectToAction("DonorDashboard");
+
+            if (userType == "NGO")
+                return RedirectToAction("NGODashboard");
+
+            return RedirectToAction("Login");
+        }
+
+        public ActionResult DonorDashboard()
+        {
+            if (!IsUserType("Donor"))
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+
+            return View();
+        }
+
+        public ActionResult NGODashboard()
+        {
+            if (!IsUserType("NGO"))
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+
+            return View();
+        }
+
+        private bool IsUserType(string type)
+        {
+            int? userTypeId = Session["UserType"] as int?;
+            if (userTypeId == null)
+                return false;
+
+            var userType = db.UserTypes.FirstOrDefault(t => t.TypeId == userTypeId)?.Type;
+            return userType == type;
         }
 
         // GET: Users/Details/5
@@ -63,19 +138,21 @@ namespace NGO_Project.Controllers
         // POST: Users/Registration
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Registration([Bind(Include = "FirstName,LastName,Username,Email,PhoneNumber,Address,City,CNIC,Type,Password")] User user)
+        public ActionResult Registration([Bind(Include = "Title,FirstName,LastName,Username,Email,PhoneNumber,Address,City,CNIC,Type,Password")] User user)
         {
-            // Check if username exists
-            if (db.Users.Any(x => x.Username == user.Username))
-                ModelState.AddModelError("Username", "Username already exists. Please choose another one.");
+            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type", user.Type);
 
-            // Check if email exists
+            if (db.Users.Any(x => x.Username == user.Username))
+                ModelState.AddModelError("Username", "Username already exists.");
+
             if (db.Users.Any(x => x.Email == user.Email))
-                ModelState.AddModelError("Email", "Email already exists. Please use another one.");
+                ModelState.AddModelError("Email", "Email already exists.");
+
+            if (!new EmailAddressAttribute().IsValid(user.Email))
+                ModelState.AddModelError("Email", "Invalid email address format.");
 
             if (!ModelState.IsValid)
             {
-                ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type", user.Type);
                 return View(user);
             }
 
@@ -83,21 +160,33 @@ namespace NGO_Project.Controllers
             user.Updated_Date = DateTime.Now;
 
             db.Users.Add(user);
+            db.SaveChanges();
+
+            // ✅ Send confirmation email using App Password (not Gmail account password!)
             try
             {
-                db.SaveChanges();
-            }
-            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
-            {
-                foreach (var validationErrors in ex.EntityValidationErrors)
+                MailMessage mail = new MailMessage();
+                mail.To.Add(user.Email);
+                mail.From = new MailAddress("danyal.alam2025@gmail.com", "Goodwill NGO");
+                mail.Subject = "Welcome to Goodwill System";
+                mail.Body = $"Dear {user.Title} {user.FirstName},\n\nThank you for registering at the Goodwill Contribution System.\n\nRegards,\nGoodwill NGO Team";
+                mail.IsBodyHtml = false;
+
+                SmtpClient smtp = new SmtpClient
                 {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        ModelState.AddModelError(validationError.PropertyName, validationError.ErrorMessage);
-                    }
-                }
-                ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type", user.Type);
-                return View(user);
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Credentials = new NetworkCredential("danyal.alam2025@gmail.com", "glodjyygpmqrjhtq") // Use Gmail App Password here
+                };
+
+                smtp.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "User registered, but email sending failed: " + ex.Message);
             }
 
             return RedirectToAction("Login");
@@ -120,7 +209,7 @@ namespace NGO_Project.Controllers
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserId,FirstName,LastName,Username,Email,PhoneNumber,Address,City,CNIC,Type,Password,Created_Date,Updated_Date")] User user)
+        public ActionResult Edit([Bind(Include = "UserId,Title,FirstName,LastName,Username,Email,PhoneNumber,Address,City,CNIC,Type,Password,Created_Date,Updated_Date")] User user)
         {
             if (!ModelState.IsValid)
             {
@@ -130,23 +219,7 @@ namespace NGO_Project.Controllers
 
             user.Updated_Date = DateTime.Now;
             db.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
-            {
-                foreach (var validationErrors in ex.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        ModelState.AddModelError(validationError.PropertyName, validationError.ErrorMessage);
-                    }
-                }
-                ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type", user.Type);
-                return View(user);
-            }
+            db.SaveChanges();
 
             return RedirectToAction("Index");
         }
@@ -172,6 +245,7 @@ namespace NGO_Project.Controllers
             User user = db.Users.Find(id);
             db.Users.Remove(user);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
