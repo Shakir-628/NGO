@@ -17,8 +17,8 @@ namespace NGO_Project.Controllers
         // GET: CashDonations
         public ActionResult Index()
         {
-            var cashDonations = db.CashDonations.Include(c => c.Donor);
-            return View(cashDonations.ToList());
+            //var cashDonations = db.CashDonations.Include(c => c.Donor);
+            return View();
         }
 
         // GET: CashDonations/Details/5

@@ -17,8 +17,8 @@ namespace NGO_Project.Controllers
         // GET: AidRequests
         public ActionResult Index()
         {
-            var aidRequests = db.AidRequests.Include(a => a.RequestedItem);
-            return View(aidRequests.ToList());
+            //var aidRequests = db.AidRequests.Include(a => a.RequestedItem);
+            return View();
         }
 
         // GET: AidRequests/Details/5

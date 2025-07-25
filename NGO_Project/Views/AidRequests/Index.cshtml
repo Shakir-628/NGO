@@ -1,64 +1,101 @@
-﻿@model IEnumerable<NGO_Project.AidRequest>
+﻿@model NGO_Project.AidRequest
 
 @{
-    ViewBag.Title = "AidRequest";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-   
+    Layout = "~/Views/Shared/_LayoutNGO.cshtml";
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Category</th>
-        <th>Urgency</th>
-        <th>Location</th>
-        <th>Date Posted</th>
-        <th>Active</th>
-        <th>Requested By</th>
-        <th>Item Name</th>
-        <th>Action</th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.RequestTitle)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Category)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UrgencyLevel)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Location)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PostDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.User.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RequestedItem.ItemName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.RequestId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.RequestId })
-        </td>
-    </tr>
-}
-
-</table>
+<div class="tab-content">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 18px;">
+        <button id="openFeedModalBtn" style="background: #111827; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size:1.1rem;">&#128393;</span> Post New Request
+        </button>
+    </div>
+    <div style="font-size: 2rem; font-weight: 700; margin-bottom: 18px; color: #111827;">Public Aid Feed Management</div>
+    <div style="background: #fff; border-radius: 10px; border: 1.5px solid #e5e7eb; padding: 24px 24px 18px 24px; margin-bottom: 28px;">
+        <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; color: #111827;">Your Active Feed Posts</div>
+        <div style="color: #6b7280; font-size: 1.05rem; margin-bottom: 18px;">Manage your organization's public aid requests</div>
+        <div style="background: #fff; border-radius: 8px; border: 1.5px solid #e5e7eb; padding: 18px 18px 12px 18px; position: relative; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: #111827; margin-bottom: 2px;">Emergency Food Relief - Flood Victims</div>
+                    <div style="color: #374151; font-size: 1.01rem; margin-bottom: 10px;">Urgent need for dry rations for 200 families affected by recent floods in Sindh</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center;">
+                        <span style="background: #fee2e2; color: #b91c1c; border-radius: 8px; padding: 4px 12px; font-size: 0.95rem; font-weight: 600;">HIGH PRIORITY</span>
+                        <span style="background: #e0e7ff; color: #3730a3; border-radius: 8px; padding: 4px 12px; font-size: 0.95rem; font-weight: 500;">Food & Nutrition</span>
+                        <span style="background: #f3f4f6; color: #374151; border-radius: 8px; padding: 4px 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 4px; font-weight: 500;">
+                            <span style="color:#ec4899; font-size:1.1em;">&#128205;</span> Sindh, Pakistan
+                        </span>
+                    </div>
+                    <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 6px;">Items Needed:</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                        <span style="background: #f3f4f6; color: #374151; border-radius: 16px; padding: 5px 14px; font-size: 0.98rem;">Rice</span>
+                        <span style="background: #f3f4f6; color: #374151; border-radius: 16px; padding: 5px 14px; font-size: 0.98rem;">Flour</span>
+                        <span style="background: #f3f4f6; color: #374151; border-radius: 16px; padding: 5px 14px; font-size: 0.98rem;">Cooking Oil</span>
+                        <span style="background: #f3f4f6; color: #374151; border-radius: 16px; padding: 5px 14px; font-size: 0.98rem;">Lentils</span>
+                    </div>
+                    <div style="color: #6b7280; font-size: 0.98rem; margin-top: 8px;">Posted on: 5/25/2025</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button style="background: #f3f4f6; border: none; border-radius: 6px; padding: 8px; cursor: pointer;">
+                        <span style="font-size: 1.1rem; color: #374151;">&#9998;</span>
+                    </button>
+                    <button style="background: #f3f4f6; border: none; border-radius: 6px; padding: 8px; cursor: pointer;">
+                        <span style="font-size: 1.1rem; color: #b91c1c;">&#128465;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for New Feed Request -->
+    <div class="modal-bg" id="feedModalBg">
+        <div class="modal-content">
+            <h2>Post New Aid Request to Public Feed</h2>
+            <p>Create a public request that donors can see and respond to</p>
+            <form>
+                <div class="modal-form-row">
+                    <div class="modal-form-group">
+                        <label for="requestTitle">Request Title</label>
+                        <input id="requestTitle" type="text" placeholder="Emergency relief for..." />
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="category">Category</label>
+                        <select id="category">
+                            <option>Select category</option>
+                            <option>Food & Nutrition</option>
+                            <option>Clothing</option>
+                            <option>Healthcare</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-form-row">
+                    <div class="modal-form-group">
+                        <label for="urgency">Urgency Level</label>
+                        <select id="urgency">
+                            <option>Select urgency</option>
+                            <option>High Priority</option>
+                            <option>Medium Priority</option>
+                            <option>Low Priority</option>
+                        </select>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="location">Location</label>
+                        <input id="location" type="text" placeholder="Karachi, Sindh" />
+                    </div>
+                </div>
+                <div class="modal-form-group" style="margin-bottom: 16px;">
+                    <label for="itemsNeeded">Items Needed (comma separated)</label>
+                    <input id="itemsNeeded" type="text" placeholder="Rice, Flour, Blankets, Medicine..." />
+                </div>
+                <div class="modal-form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" placeholder="Detailed description of the aid needed..."></textarea>
+                </div>
+                <div class="modal-form-actions">
+                    <button type="submit" class="primary">Post to Feed</button>
+                    <button type="button" class="secondary" id="cancelFeedModalBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

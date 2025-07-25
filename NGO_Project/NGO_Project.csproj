@@ -136,7 +136,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AidRequestsController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CashDonationsController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DistributionOrdersController.cs" />
     <Compile Include="Controllers\DocumentsController.cs" />
     <Compile Include="Controllers\DonationItemsController.cs" />
@@ -1090,7 +1092,6 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -1121,18 +1122,20 @@
     <Content Include="Views\DonationItems\Create.cshtml" />
     <Content Include="Views\DonationItems\Edit.cshtml" />
     <Content Include="Views\DonationItems\Index.cshtml" />
-    <Content Include="Views\Donors\Create.cshtml" />
-    <Content Include="Views\Donors\Edit.cshtml" />
-    <Content Include="Views\Donors\Index.cshtml" />
     <Content Include="Views\RequestedItems\Create.cshtml" />
     <Content Include="Views\RequestedItems\Edit.cshtml" />
     <Content Include="Views\RequestedItems\Index.cshtml" />
-    <Content Include="Views\Users\NGODashboard.cshtml" />
-    <Content Include="Views\Users\DonorDashboard.cshtml" />
+    <Content Include="Views\Donors\Feed.cshtml" />
+    <Content Include="Views\Donors\Home.cshtml" />
+    <Content Include="Views\Shared\_LayoutNGO.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Dashboard\Donor.cshtml" />
+    <Content Include="Views\Dashboard\NGO.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

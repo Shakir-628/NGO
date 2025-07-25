@@ -4,12 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Web.Mvc;
-using System.ComponentModel.DataAnnotations; // For email validation
+using System.ComponentModel.DataAnnotations;
 using NGO_Project;
+using System.Web;
 
 namespace NGO_Project.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
         private NGOEntities db = new NGOEntities();
 
@@ -31,52 +32,46 @@ namespace NGO_Project.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(User user, string Type)
         {
-            try
+            ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
+
+            if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
             {
-                ViewBag.UserTypelist = new SelectList(db.UserTypes, "TypeId", "Type");
-
-                if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
-                {
-                    ModelState.AddModelError("", "Username and Password are required.");
-                    return View();
-                }
-
-                if (string.IsNullOrWhiteSpace(Type))
-                {
-                    ModelState.AddModelError("Type", "Please select a user type.");
-                    return View();
-                }
-
-                var userType = db.UserTypes.FirstOrDefault(x => x.Type == Type);
-                if (userType == null)
-                {
-                    ModelState.AddModelError("Type", "Invalid user type selected.");
-                    return View();
-                }
-
-                var existingUser = db.Users.FirstOrDefault(x =>
-                    x.Username == user.Username &&
-                    x.Password == user.Password &&
-                    x.Type == userType.TypeId
-                );
-
-                if (existingUser == null)
-                {
-                    ModelState.AddModelError("", "Invalid username, password, or user type.");
-                    return View();
-                }
-
-                Session["UserId"] = existingUser.UserId;
-                Session["Username"] = existingUser.Username;
-                Session["UserType"] = existingUser.Type;
-                Session["FullName"] = $"{existingUser.FirstName} {existingUser.LastName}";
-
-                return RedirectToAction("Dashboard");
+                ModelState.AddModelError("", "Username and Password are required.");
+                return View();
             }
-            catch (Exception)
+
+            if (string.IsNullOrWhiteSpace(Type))
             {
-                throw;
+                ModelState.AddModelError("Type", "Please select a user type.");
+                return View();
             }
+
+            var userType = db.UserTypes.FirstOrDefault(x => x.Type == Type);
+            if (userType == null)
+            {
+                ModelState.AddModelError("Type", "Invalid user type selected.");
+                return View();
+            }
+
+            var existingUser = db.Users.FirstOrDefault(x =>
+                x.Username == user.Username &&
+                x.Password == user.Password &&
+                x.Type == userType.TypeId
+            );
+
+            if (existingUser == null)
+            {
+                ModelState.AddModelError("", "Invalid username, password, or user type.");
+                return View();
+            }
+
+            // Store session variables
+            Session["UserId"] = existingUser.UserId;
+            Session["Username"] = existingUser.Username;
+            Session["UserType"] = existingUser.Type;
+            Session["FullName"] = $"{existingUser.FirstName} {existingUser.LastName}";
+
+            return RedirectToAction("Dashboard");
         }
 
         public ActionResult Dashboard()
@@ -88,20 +83,12 @@ namespace NGO_Project.Controllers
             var userType = db.UserTypes.FirstOrDefault(u => u.TypeId == typeId)?.Type;
 
             if (userType == "Donor")
-                return RedirectToAction("DonorDashboard");
+                return RedirectToAction("Donor", "Dashboard");
 
             if (userType == "NGO")
-                return RedirectToAction("NGODashboard");
+                return RedirectToAction("NGO", "Dashboard");
 
-            return RedirectToAction("Login");
-        }
-
-        public ActionResult DonorDashboard()
-        {
-            if (!IsUserType("Donor"))
-                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
-
-            return View();
+            return RedirectToAction("login");
         }
 
         public ActionResult NGODashboard()
@@ -109,7 +96,7 @@ namespace NGO_Project.Controllers
             if (!IsUserType("NGO"))
                 return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
-            return View();
+            return View(); // Should point to Views/Users/NGODashboard.cshtml
         }
 
         private bool IsUserType(string type)
@@ -159,9 +146,7 @@ namespace NGO_Project.Controllers
                 ModelState.AddModelError("Email", "Invalid email address format.");
 
             if (!ModelState.IsValid)
-            {
                 return View(user);
-            }
 
             user.Created_Date = DateTime.Now;
             user.Updated_Date = DateTime.Now;
@@ -169,7 +154,7 @@ namespace NGO_Project.Controllers
             db.Users.Add(user);
             db.SaveChanges();
 
-            // ✅ Send confirmation email using App Password (not Gmail account password!)
+            // ✅ Send confirmation email
             try
             {
                 MailMessage mail = new MailMessage();
@@ -186,7 +171,7 @@ namespace NGO_Project.Controllers
                     EnableSsl = true,
                     UseDefaultCredentials = false,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
-                    Credentials = new NetworkCredential("danyal.alam2025@gmail.com", "glodjyygpmqrjhtq") // Use Gmail App Password here
+                    Credentials = new NetworkCredential("danyal.alam2025@gmail.com", "glodjyygpmqrjhtq")
                 };
 
                 smtp.Send(mail);
@@ -234,6 +219,7 @@ namespace NGO_Project.Controllers
         // GET: Users/Delete/5
         public ActionResult Delete(int? id)
         {
+
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
@@ -254,6 +240,22 @@ namespace NGO_Project.Controllers
             db.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+        // GET: Users/Logout
+        public ActionResult Logout()
+        {
+            // Clear individual session keys (optional clarity)
+            Session["UserId"] = null;
+            Session["Username"] = null;
+            Session["UserType"] = null;
+            Session["FullName"] = null;
+
+            // Clear and abandon session
+            Session.Clear();
+            Session.Abandon();
+
+            return RedirectToAction("Login");
         }
 
         protected override void Dispose(bool disposing)

@@ -17,8 +17,8 @@ namespace NGO_Project.Controllers
         // GET: InventoryItems
         public ActionResult Index()
         {
-            var inventoryItems = db.InventoryItems;
-            return View(inventoryItems.ToList());
+            //var inventoryItems = db.InventoryItems;
+            return View();
         }
 
         // GET: InventoryItems/Details/5

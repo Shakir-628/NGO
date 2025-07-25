@@ -1,56 +1,84 @@
-﻿@model IEnumerable<NGO_Project.Document>
+﻿@model NGO_Project.Document
 
 @{
-    ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutNGO.cshtml";
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>Document Type</th>
-        <th>Document Title</th>
-        <th>Generated Date</th>
-        <th>Status</th>
-        <th>Related Entity ID</th>
-        <th>File Path</th>
-        <th>User First Name</th>
-        <th>Action</th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.DocumentType)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DocumentTitle)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GeneratedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RelatedEntityId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FilePath)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.User.FirstName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.DocumentId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.DocumentId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.DocumentId })
-        </td>
-    </tr>
-}
-
-</table>
+<div class="tab-content">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 18px;">
+        <button style="background: #111827; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size:1.1rem;">&#43;</span> Generate Document
+        </button>
+    </div>
+    <div style="font-size: 2rem; font-weight: 700; margin-bottom: 18px; color: #111827;">Document Management Center</div>
+    <div style="display: flex; gap: 18px; margin-bottom: 24px; flex-wrap: wrap;">
+        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
+            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">GRNs Generated <span style='font-size:1.1rem; color:#6b7280;'>&#128230;</span></div>
+            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">1</div>
+            <div style="color: #6b7280; font-size: 0.98rem;">This month</div>
+        </div>
+        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
+            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">Receipts Issued <span style='font-size:1.1rem; color:#6b7280;'>&#128196;</span></div>
+            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">1</div>
+            <div style="color: #6b7280; font-size: 0.98rem;">This month</div>
+        </div>
+        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
+            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">Distribution Orders <span style='font-size:1.1rem; color:#6b7280;'>&#128230;</span></div>
+            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">1</div>
+            <div style="color: #6b7280; font-size: 0.98rem;">This month</div>
+        </div>
+    </div>
+    <div style="background: #fff; border-radius: 10px; border: 1.5px solid #e5e7eb; padding: 24px 24px 18px 24px; margin-bottom: 28px;">
+        <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; color: #111827;">Recent Documents</div>
+        <div style="color: #6b7280; font-size: 1.05rem; margin-bottom: 18px;">Automated document generation and management</div>
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:1.05rem;">
+                <thead>
+                    <tr style="color:#6b7280; text-align:left; border-bottom:1.5px solid #e5e7eb;">
+                        <th style="padding:10px 8px; font-weight:600;">Document ID</th>
+                        <th style="padding:10px 8px; font-weight:600;">Type</th>
+                        <th style="padding:10px 8px; font-weight:600;">Title</th>
+                        <th style="padding:10px 8px; font-weight:600;">Generated Date</th>
+                        <th style="padding:10px 8px; font-weight:600;">Status</th>
+                        <th style="padding:10px 8px; font-weight:600;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom:1px solid #f3f4f6;">
+                        <td style="padding:10px 8px; font-weight:600; color:#111827;">DOC-001</td>
+                        <td style="padding:10px 8px;"><span style='font-size:1.1rem;'>&#128230;</span> GRN</td>
+                        <td style="padding:10px 8px;">Goods Receipt Note - Rice Donation</td>
+                        <td style="padding:10px 8px;">2024-01-15</td>
+                        <td style="padding:10px 8px;"><span style="background:#dcfce7; color:#16a34a; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">COMPLETED</span></td>
+                        <td style="padding:10px 8px;">
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; margin-right:6px; cursor:pointer;" title="View">&#128065;</button>
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; cursor:pointer;" title="Download">&#128229;</button>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f3f4f6;">
+                        <td style="padding:10px 8px; font-weight:600; color:#111827;">DOC-002</td>
+                        <td style="padding:10px 8px;"><span style='font-size:1.1rem;'>&#128196;</span> Receipt</td>
+                        <td style="padding:10px 8px;">Donation Receipt - Ahmed Ali Khan</td>
+                        <td style="padding:10px 8px;">2024-01-14</td>
+                        <td style="padding:10px 8px;"><span style="background:#dcfce7; color:#16a34a; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">COMPLETED</span></td>
+                        <td style="padding:10px 8px;">
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; margin-right:6px; cursor:pointer;" title="View">&#128065;</button>
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; cursor:pointer;" title="Download">&#128229;</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:10px 8px; font-weight:600; color:#111827;">DOC-003</td>
+                        <td style="padding:10px 8px;"><span style='font-size:1.1rem;'>&#128230;</span> Distribution Order</td>
+                        <td style="padding:10px 8px;">Distribution Order - Community Center</td>
+                        <td style="padding:10px 8px;">2024-01-13</td>
+                        <td style="padding:10px 8px;"><span style="background:#fef9c3; color:#b45309; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">PENDING</span></td>
+                        <td style="padding:10px 8px;">
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; margin-right:6px; cursor:pointer;" title="View">&#128065;</button>
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; cursor:pointer;" title="Download">&#128229;</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

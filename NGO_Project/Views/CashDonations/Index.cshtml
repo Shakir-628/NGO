@@ -1,52 +1,84 @@
-﻿@model IEnumerable<NGO_Project.CashDonation>
+﻿
+@model NGO_Project.CashDonation
 
 @{
-    ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutNGO.cshtml";
 }
 
-<h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>Amount</th>
-        <th>Currency</th>
-        <th>Donation Date</th>
-        <th>Notes</th>
-        <th>Donor Name</th>
-        <th>User First Name</th>
-        <th>Action</th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Amount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Currency)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DonationDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Notes)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Donor.FullName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.User.FirstName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CashDonationId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CashDonationId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CashDonationId })
-        </td>
-    </tr>
-}
-
-</table>
+<div class="tab-content">
+    <div style="font-size: 2rem; font-weight: 700; margin-bottom: 18px; color: #111827;">Donor Relationship Management</div>
+    <div style="display: flex; gap: 18px; margin-bottom: 24px; flex-wrap: wrap;">
+        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
+            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">Total Donors <span style='font-size:1.1rem; color:#6b7280;'>&#128101;</span></div>
+            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">156</div>
+            <div style="color: #6b7280; font-size: 0.98rem;">+12 this month</div>
+        </div>
+        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
+            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">Active Donors <span style='font-size:1.1rem; color:#16a34a;'>&#10003;</span></div>
+            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">134</div>
+            <div style="color: #6b7280; font-size: 0.98rem;">86% retention</div>
+        </div>
+        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
+            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">Total Raised <span style='font-size:1.1rem; color:#6b7280;'>&#128197;</span></div>
+            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">PKR 2.4M</div>
+            <div style="color: #6b7280; font-size: 0.98rem;">This year</div>
+        </div>
+        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
+            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">Avg Donation <span style='font-size:1.1rem; color:#6b7280;'>&#128197;</span></div>
+            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">PKR 15.4K</div>
+            <div style="color: #6b7280; font-size: 0.98rem;">Per donor</div>
+        </div>
+    </div>
+    <div style="background: #fff; border-radius: 10px; border: 1.5px solid #e5e7eb; padding: 24px 24px 18px 24px; margin-bottom: 28px;">
+        <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; color: #111827;">Donor Database</div>
+        <div style="color: #6b7280; font-size: 1.05rem; margin-bottom: 18px;">Manage relationships with your donors</div>
+        <div style="margin-bottom: 18px;">
+            <input type="text" placeholder="Search donors..." style="width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:6px; font-size:1rem; background:#f9fafb;" />
+        </div>
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:1.05rem;">
+                <thead>
+                    <tr style="color:#6b7280; text-align:left; border-bottom:1.5px solid #e5e7eb;">
+                        <th style="padding:10px 8px; font-weight:600;">Name</th>
+                        <th style="padding:10px 8px; font-weight:600;">Contact</th>
+                        <th style="padding:10px 8px; font-weight:600;">Type</th>
+                        <th style="padding:10px 8px; font-weight:600;">Total Donations</th>
+                        <th style="padding:10px 8px; font-weight:600;">Last Donation</th>
+                        <th style="padding:10px 8px; font-weight:600;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom:1px solid #f3f4f6;">
+                        <td style="padding:10px 8px; font-weight:600; color:#111827;">Ahmed Ali Khan</td>
+                        <td style="padding:10px 8px;">
+                            <span style='color:#6b7280;'>&#9993;</span> ahmed.ali@email.com<br>
+                            <span style='color:#6b7280;'>&#128222;</span> +92-300-1234567
+                        </td>
+                        <td style="padding:10px 8px;"><span style="background:#dcfce7; color:#16a34a; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">Individual</span></td>
+                        <td style="padding:10px 8px;">PKR 45,000</td>
+                        <td style="padding:10px 8px;">2024-01-15</td>
+                        <td style="padding:10px 8px;">
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 16px; font-size:1rem; font-weight:500; color:#111827; margin-right:6px; cursor:pointer;">View</button>
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 16px; font-size:1rem; font-weight:500; color:#111827; cursor:pointer;">Contact</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:10px 8px; font-weight:600; color:#111827;">Fatima Foundation</td>
+                        <td style="padding:10px 8px;">
+                            <span style='color:#6b7280;'>&#9993;</span> contact@fatimafoundation.org<br>
+                            <span style='color:#6b7280;'>&#128222;</span> +92-21-1234567
+                        </td>
+                        <td style="padding:10px 8px;"><span style="background:#e0e7ff; color:#3730a3; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">Organization</span></td>
+                        <td style="padding:10px 8px;">PKR 250,000</td>
+                        <td style="padding:10px 8px;">2024-01-12</td>
+                        <td style="padding:10px 8px;">
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 16px; font-size:1rem; font-weight:500; color:#111827; margin-right:6px; cursor:pointer;">View</button>
+                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 16px; font-size:1rem; font-weight:500; color:#111827; cursor:pointer;">Contact</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

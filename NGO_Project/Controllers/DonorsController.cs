@@ -15,9 +15,9 @@ namespace NGO_Project.Controllers
         private NGOEntities db = new NGOEntities();
 
         // GET: Donors
-        public ActionResult Index()
+        public ActionResult Home()
         {
-            return View(db.Donors.ToList());
+            return View();
         }
 
         // GET: Donors/Details/5
