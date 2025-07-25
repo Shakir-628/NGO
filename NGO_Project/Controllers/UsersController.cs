@@ -5,11 +5,12 @@ using System.Net;
 using System.Net.Mail;
 using System.Web.Mvc;
 using System.ComponentModel.DataAnnotations;
+using NGO_Project;
 using NGO_Project.Libs;
 
 namespace NGO_Project.Controllers
 {
-    public class UsersController
+    public class UsersController: Controller
     {
         private NGOEntities db = new NGOEntities();
 
@@ -45,19 +46,19 @@ namespace NGO_Project.Controllers
                 return View();
             }
 
-            var userType = db.UserTypes.FirstOrDefault(x => x.Type == Type);
+            var userType = db.UserTypes.FirstOrDefault(x => x.TypeId.ToString() == Type);
             if (userType == null)
             {
                 ModelState.AddModelError("Type", "Invalid user type selected.");
                 return View();
             }
 
+            var encryptedPassword = Encryption.Encrypt(user.Password);
             var existingUser = db.Users.FirstOrDefault(x =>
                 x.Username == user.Username &&
-                x.Password == user.Password &&
+                x.Password == encryptedPassword &&
                 x.Type == userType.TypeId
             );
-            var encryptedPassword = Encryption.Encrypt(user.Password);
 
            
             if (existingUser == null)
