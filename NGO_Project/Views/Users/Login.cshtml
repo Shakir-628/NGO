@@ -1,17 +1,21 @@
 ﻿@model NGO_Project.User
 
 @{
-    Layout = null;  // You can set a layout here if you want, e.g. "~/Views/Shared/_Layout.cshtml"
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Login - GC&ASMS</title>
+    <meta charset="UTF-8">
+    <title>Login - Helping Hands</title>
+    <link rel="icon" type="image/png" href="~/assets/img/logo/HelpingHands.png" />
+
+    <!-- Fonts & Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -33,15 +37,58 @@
             width: 100%;
         }
 
-        .login-card {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 30px;
-            margin-top: 30px;
+        .header-section {
+            text-align: center;
         }
 
-        .form-group label {
-            font-weight: bold;
+        .logo-wrapper img {
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .header-section h1 {
+            font-size: 1.8em;
+            color: #007bff;
+            margin-top: 0;
+        }
+
+        .header-section h2 {
+            font-size: 1.1em;
+            color: #495057;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #e9ecef;
+            border: 1px solid #007bff;
+            color: #495057;
+            border-radius: 0;
+            margin-right: 5px;
+        }
+
+            .tab-button.active {
+                background-color: #007bff;
+                color: white;
+            }
+
+        .tab-content {
+            display: none;
+            margin-top: 20px;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
         }
 
         .login-button {
@@ -63,17 +110,44 @@
             margin-top: 20px;
             text-align: center;
         }
+
+            .signup-link a {
+                color: #007bff;
+                text-decoration: none;
+            }
+
+                .signup-link a:hover {
+                    text-decoration: underline;
+                }
+
+        .text-danger {
+            font-size: 0.85em;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2 class="text-center text-primary">Goodwill Contribution & Aid Management System</h2>
-        <p class="text-center text-muted">Login to continue</p>
+        <div class="header-section mb-4">
+            <div class="logo-wrapper d-flex justify-content-center">
+                <img src="~/assets/img/logo/HelpingHands.jpg" alt="Logo" />
+            </div>
+            <h1 class="text-success fw-bold">Helping Hands</h1>
+            <h2>Bridging the gap between community needs and donor contributions</h2>
+            <p>Your platform for seamless aid management.</p>
+        </div>
 
-        <div class="login-card">
-            @using (Html.BeginForm("Login", "Users", FormMethod.Post))
+        <!-- Tab Buttons -->
+        <div class="text-center mb-3">
+            <button class="tab-button active" data-tab="donor">Donor</button>
+            <button class="tab-button" data-tab="ngo">NGO</button>
+        </div>
+
+        <!-- Donor Login -->
+        <div id="donor" class="tab-content active">
+            @using (Html.BeginForm("Login", "Users", FormMethod.Post, new { id = "donorForm" }))
             {
                 @Html.AntiForgeryToken()
+                @Html.Hidden("Type", "Donor")
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.Username)
@@ -84,54 +158,66 @@
                 <div class="form-group">
                     @Html.LabelFor(m => m.Password)
                     <div class="input-group">
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", id = "Password", placeholder = "Enter your password" })
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", id = "donorPassword", placeholder = "Enter your password" })
                         <div class="input-group-append">
-                            <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
-                                <i id="eyeIcon" class="fa fa-eye"></i>
+                            <span class="input-group-text" id="toggleDonorPassword" style="cursor: pointer;">
+                                <i class="fa fa-eye" id="donorEyeIcon"></i>
                             </span>
                         </div>
                     </div>
                     @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                 </div>
 
-                <div class="form-group">
-                    @Html.Label("User Type")
-                    <select name="Type" id="Type" class="form-control">
-                        <option value="">-- Select Type --</option>
-                        <option value="Donor" @(Request["Type"] == "Donor" ? "selected" : "")>Donor</option>
-                        <option value="NGO" @(Request["Type"] == "NGO" ? "selected" : "")>NGO</option>
-                    </select>
-                    @if (ViewData.ModelState["Type"]?.Errors.Count > 0)
-                    {
-                        <span class="text-danger">@ViewData.ModelState["Type"].Errors[0].ErrorMessage</span>
-                    }
-                </div>
-
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                <button type="submit" class="login-button">Login</button>
+                <button type="submit" class="login-button">Login as Donor</button>
             }
-
-            <div class="signup-link">
-                Don't have an account? <a href="@Url.Action("Registration", "Users")">Register here</a>
-            </div>
+        </div>
+        <div class="signup-link">
+            Don't have an account? <a href="@Url.Action("Registration", "Users")">Register here</a>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script>
-        document.getElementById('togglePassword')?.addEventListener('click', function () {
-            var input = document.getElementById('Password');
-            var icon = document.getElementById('eyeIcon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
+        // Tab Switching
+        const tabs = document.querySelectorAll(".tab-button");
+        const contents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                contents.forEach(c => c.classList.remove("active"));
+
+                tab.classList.add("active");
+                const activeId = tab.getAttribute("data-tab");
+                document.getElementById(activeId).classList.add("active");
+            });
         });
+
+        // Toggle password visibility (Donor)
+        document.getElementById("toggleDonorPassword")?.addEventListener("click", function () {
+            var input = document.getElementById("donorPassword");
+            var icon = document.getElementById("donorEyeIcon");
+            togglePassword(input, icon);
+        });
+
+        // Toggle password visibility (NGO)
+        document.getElementById("toggleNgoPassword")?.addEventListener("click", function () {
+            var input = document.getElementById("ngoPassword");
+            var icon = document.getElementById("ngoEyeIcon");
+            togglePassword(input, icon);
+        });
+
+        function togglePassword(input, icon) {
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
     </script>
 
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.6.0.min.js"></script>

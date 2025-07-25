@@ -8,15 +8,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register - Goodwill System</title>
+    <title>Register - Helping Hands</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="~/assets/img/logo/favicon.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="~/assets/css/select2.min.css" rel="stylesheet" />
 </head>
 <body class="bg-light">
 
     <div class="container mt-5">
         <div class="text-center mb-4">
-            <h4 class="text-success fw-bold">Goodwill Contribution & Aid Management System</h4>
+            <!-- Logo -->
+            <div class="d-flex justify-content-center">
+                <img src="~/assets/img/logo/HelpingHands.jpg" alt="Helping Hands Logo" style="height: 100px;" />
+            </div>
+            <h4 class="text-success fw-bold">Helping Hands</h4>
             <p>Bridging the gap between community needs and donor contributions through transparent, efficient donation lifecycle management.</p>
         </div>
 
@@ -31,7 +38,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Account Type</label>
-                            @Html.DropDownListFor(m => m.Type, (IEnumerable<SelectListItem>)ViewBag.UserTypelist, "Select Account Type", new { @class = "form-select", required = "required" })
+                            @Html.DropDownListFor(m => m.Type, (IEnumerable<SelectListItem>)ViewBag.UserTypelist, "Select Account Type", new { @class = "form-select searchable", required = "required", id = "Type" })
                             @Html.ValidationMessageFor(m => m.Type, "", new { @class = "text-danger" })
                         </div>
 
@@ -47,13 +54,13 @@
 
                         <div class="mb-3">
                             @Html.Label("First Name")
-                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", required = "required", maxlength = "30", minlength = "3" })
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control alphabetsonly", required = "required", maxlength = "30", minlength = "3" })
                             @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
                             @Html.Label("Last Name")
-                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", required = "required", maxlength = "30", minlength = "3" })
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control alphabetsonly", required = "required", maxlength = "30", minlength = "3" })
                             @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
                         </div>
 
@@ -77,37 +84,31 @@
                                     <i id="registerEyeIcon" class="fa fa-eye"></i>
                                 </span>
                             </div>
+                            <small id="passwordStrength" class="form-text text-muted"></small>
                             @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
                             @Html.Label("Phone Number")
-                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", required = "required", maxlength = "15", minlength = "10" })
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control numbersOnly", required = "required", maxlength = "15", minlength = "10" })
                             @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
-                            @Html.Label("CNIC")
-                            @Html.TextBoxFor(m => m.CNIC, new
-                            {
-                                @class = "form-control",
-                                required = "required",
-                                maxlength = "15",
-                                placeholder = "e.g. 35202-1234567-1",
-                                id = "CNIC"
-                            })
+                            <label id="cnicLabel" class="form-label">CNIC</label>
+                            @Html.TextBoxFor(m => m.CNIC, new { @class = "form-control", required = "required", maxlength = "15", placeholder = "e.g. 35202-1234567-1", id = "CNIC" })
                             @Html.ValidationMessageFor(m => m.CNIC, "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
                             @Html.Label("Address")
-                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", required = "required" })
+                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control alphabetsonly", required = "required" })
                             @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
                             @Html.Label("City")
-                            @Html.TextBoxFor(m => m.City, new { @class = "form-control", maxlength = "100", placeholder = "Enter your city" })
+                            @Html.TextBoxFor(m => m.City, new { @class = "form-control alphabetsonly", maxlength = "100", placeholder = "Enter your city", required = "required" })
                             @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
                         </div>
 
@@ -124,7 +125,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script src="~/assets/js/select2.min.js"></script>
 
     <script>
         // Password visibility toggle
@@ -145,7 +147,95 @@
 
         // CNIC input mask
         $(document).ready(function () {
-            $('#CNIC').mask('00000-0000000-0');
+            $('.numbersOnly').on('input', function () {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+            $('.alphabetsonly').on('input', function () {
+                this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+            });
+
+            $('.searchable').select2();
+
+            const $typeSelect = $('#Type');
+            const $cnicInput = $('#CNIC');
+            const $cnicLabel = $('#cnicLabel');
+
+            function updateCnicField() {
+                const selectedType = $typeSelect.val();
+                if (selectedType === "1") {
+                    $cnicLabel.text("CNIC");
+                    $cnicInput.attr("placeholder", "e.g. 35202-1234567-1");
+                    $cnicInput.inputmask("99999-9999999-9");
+                } else if (selectedType === "3") {
+                    $cnicLabel.text("NGO Registration Number");
+                    $cnicInput.attr("placeholder", "Enter Registration Number");
+                    $cnicInput.inputmask('remove');
+                } else {
+                    $cnicLabel.text("CNIC");
+                    $cnicInput.attr("placeholder", "e.g. 35202-1234567-1");
+                    $cnicInput.inputmask("99999-9999999-9");
+                }
+            }
+
+            $typeSelect.change(updateCnicField).trigger('change');
+
+            // Password eye toggle
+            $("#toggleRegisterPassword").on('click', function () {
+                const input = $("#registerPassword");
+                const icon = $("#registerEyeIcon");
+                const type = input.attr("type") === "password" ? "text" : "password";
+                input.attr("type", type);
+                icon.toggleClass("fa-eye fa-eye-slash");
+            });
+
+            // Password strength
+            $('#registerPassword').on('input', function () {
+                const val = $(this).val();
+                const strengthText = $('#passwordStrength');
+
+                if (val.length < 8) {
+                    strengthText.text('Too short').css('color', 'red');
+                } else if (!/\d/.test(val) || !/[A-Za-z]/.test(val)) {
+                    strengthText.text('Weak: use both letters and numbers').css('color', 'orange');
+                } else {
+                    strengthText.text('Strong password').css('color', 'green');
+                }
+            });
+
+            // Form validation
+            $('form').on('submit', function (e) {
+                let isValid = true;
+                $('.form-control, .form-select').removeClass('is-invalid');
+
+                $(this).find('[required]').each(function () {
+                    if (!$(this).val().trim()) {
+                        $(this).addClass('is-invalid');
+                        isValid = false;
+                    }
+                });
+
+                const phone = $('[name="PhoneNumber"]').val();
+                const phonePattern = /^[0-9]{10,15}$/;
+                if (!phonePattern.test(phone)) {
+                    $('[name="PhoneNumber"]').addClass('is-invalid');
+                    isValid = false;
+                }
+
+                const selectedType = $typeSelect.val();
+                const cnic = $cnicInput.val();
+                const cnicPattern = /^[0-9]{5}-[0-9]{7}-[0-9]{1}$/;
+
+                if (selectedType === "1" && !cnicPattern.test(cnic)) {
+                    $cnicInput.addClass('is-invalid');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert("Please correct the highlighted errors before submitting.");
+                }
+            });
         });
     </script>
 </body>

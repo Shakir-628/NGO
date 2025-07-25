@@ -5,12 +5,11 @@ using System.Net;
 using System.Net.Mail;
 using System.Web.Mvc;
 using System.ComponentModel.DataAnnotations;
-using NGO_Project;
-using System.Web;
+using NGO_Project.Libs;
 
 namespace NGO_Project.Controllers
 {
-    public class UsersController : BaseController
+    public class UsersController
     {
         private NGOEntities db = new NGOEntities();
 
@@ -58,7 +57,9 @@ namespace NGO_Project.Controllers
                 x.Password == user.Password &&
                 x.Type == userType.TypeId
             );
+            var encryptedPassword = Encryption.Encrypt(user.Password);
 
+           
             if (existingUser == null)
             {
                 ModelState.AddModelError("", "Invalid username, password, or user type.");
@@ -129,7 +130,6 @@ namespace NGO_Project.Controllers
             return View();
         }
 
-        // POST: Users/Registration
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Registration([Bind(Include = "Title,FirstName,LastName,Username,Email,PhoneNumber,Address,City,CNIC,Type,Password")] User user)
@@ -138,7 +138,6 @@ namespace NGO_Project.Controllers
 
             if (db.Users.Any(x => x.Username == user.Username))
                 ModelState.AddModelError("Username", "Username already exists.");
-
             if (db.Users.Any(x => x.Email == user.Email))
                 ModelState.AddModelError("Email", "Email already exists.");
 
@@ -148,6 +147,7 @@ namespace NGO_Project.Controllers
             if (!ModelState.IsValid)
                 return View(user);
 
+            user.Password = Encryption.Encrypt(user.Password);
             user.Created_Date = DateTime.Now;
             user.Updated_Date = DateTime.Now;
 
@@ -181,6 +181,7 @@ namespace NGO_Project.Controllers
                 ModelState.AddModelError("", "User registered, but email sending failed: " + ex.Message);
             }
 
+            TempData["SuccessMessage"] = "Account created successfully!";
             return RedirectToAction("Login");
         }
 
@@ -209,6 +210,7 @@ namespace NGO_Project.Controllers
                 return View(user);
             }
 
+            user.Password = Encryption.Encrypt(user.Password);
             user.Updated_Date = DateTime.Now;
             db.Entry(user).State = EntityState.Modified;
             db.SaveChanges();
