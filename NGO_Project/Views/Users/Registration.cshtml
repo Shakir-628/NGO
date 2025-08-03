@@ -1,9 +1,7 @@
 ﻿@model NGO_Project.User
-
 @{
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,37 +34,33 @@
 
                         <div class="mb-3">
                             <label class="form-label">Account Type</label>
-                            @Html.DropDownListFor(m => m.Type, (IEnumerable<SelectListItem>)ViewBag.UserTypelist, "Select Account Type", new { @class = "form-select searchable", required = "required", id = "ItemId" })
+                            @Html.DropDownListFor(m => m.Type, (IEnumerable<SelectListItem>)ViewBag.UserTypelist, "Select Account Type", new { @class = "form-select searchable", required = "required", id = "Type" })
                             @Html.ValidationMessageFor(m => m.Type, "", new { @class = "text-danger" })
                         </div>
+
                         <!-- Title Field -->
-                        <div class="mb-3">
+                        <div class="mb-3" id="titleField">
                             @Html.Label("Title")
                             @Html.DropDownListFor(m => m.Title,
                                 new SelectList(new List<string> { "Mr.", "Miss", "Mrs.", "Dr." }),
                                 "-- Select Title --",
-                                new { @class = "form-select", required = "required" })
-                            @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="mb-3">
-                            @Html.Label("Title")
-                            @Html.DropDownListFor(m => m.Title,
-                                new SelectList(new List<string> { "Mr.", "Miss", "Mrs.", "Dr." }),
-                                "-- Select Title --",
-                                new { @class = "form-select", required = "required" })
-                            @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+                                new { @class = "form-select" })
                         </div>
 
-                        <!-- Organization Name (was First Name) -->
+                        <!-- First Name / Org Name -->
                         <div class="mb-3">
-                            @Html.Label("Organization Name")
-                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", required = "required", maxlength = "100", minlength = "3", placeholder = "Enter organization name" })
+                            <label id="firstNameLabel" class="form-label">Full Name</label>
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", required = "required", maxlength = "100", minlength = "3", placeholder = "Enter first name" })
                             @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
                         </div>
 
-                        <!-- Last Name removed -->
-
                         <div class="mb-3">
+                            <label id="labelNameLabel" class="form-label">Full Name</label>
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", maxlength = "100", minlength = "3", placeholder = "Enter last name" })
+                            @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- User Name -->
+                        <div class="mb-3" id="userNameField">
                             @Html.Label("User Name")
                             @Html.TextBoxFor(m => m.Username, new { @class = "form-control", required = "required", maxlength = "20", minlength = "5" })
                             @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
@@ -131,23 +125,6 @@
     <script src="~/assets/js/select2.min.js"></script>
 
     <script>
-        // Password visibility toggle
-        document.getElementById("toggleRegisterPassword")?.addEventListener("click", function () {
-            const passwordInput = document.getElementById("registerPassword");
-            const icon = document.getElementById("registerEyeIcon");
-
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-            } else {
-                passwordInput.type = "password";
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
-            }
-        });
-
-        // CNIC input mask
         $(document).ready(function () {
             $('.numbersOnly').on('input', function () {
                 this.value = this.value.replace(/[^0-9]/g, '');
@@ -163,26 +140,36 @@
             const $cnicInput = $('#CNIC');
             const $cnicLabel = $('#cnicLabel');
 
-            function updateCnicField() {
+            function toggleFieldsByAccountType() {
                 const selectedType = $typeSelect.val();
-                if (selectedType === "1") {
+
+                if (selectedType === "3") { // NGO
+                    $('#titleField').hide();
+                    $('#firstNameLabel').text("Organization Name");
+                    $cnicLabel.text("NTN");
+                    $cnicInput.attr("placeholder", "Enter Registration Number");
+                    $cnicInput.inputmask('remove');
+                } else if (selectedType === "1") { // Donor
+                    $('#titleField').show();
+                    $('#userNameField').show();
+                    $('#firstNameLabel').text("First Name");
                     $cnicLabel.text("CNIC");
                     $cnicInput.attr("placeholder", "e.g. 35202-1234567-1");
                     $cnicInput.inputmask("99999-9999999-9");
-                } else if (selectedType === "3") {
-                    $cnicLabel.text("NGO Registration Number");
-                    $cnicInput.attr("placeholder", "Enter Registration Number");
-                    $cnicInput.inputmask('remove');
                 } else {
+                    $('#titleField').show();
+                    $('#firstNameLabel').text("Full Name");
                     $cnicLabel.text("CNIC");
                     $cnicInput.attr("placeholder", "e.g. 35202-1234567-1");
                     $cnicInput.inputmask("99999-9999999-9");
                 }
             }
 
-            $typeSelect.change(updateCnicField).trigger('change');
+            $typeSelect.change(function () {
+                toggleFieldsByAccountType();
+            }).trigger('change');
 
-            // Fixed password toggle
+            // Password toggle
             $("#toggleRegisterPassword").on('click', function () {
                 const input = $("#registerPassword");
                 const icon = $("#registerEyeIcon");

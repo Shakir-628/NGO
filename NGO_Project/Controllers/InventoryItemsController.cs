@@ -56,9 +56,9 @@ namespace NGO_Project.Controllers
                 db.InventoryItems.Add(inventoryItem);
                 if (!string.IsNullOrEmpty(Session["UserId"].ToString()))
                 {
-                    inventoryItem.UserId = Convert.ToInt16(Session["UserId"]);
+                    inventoryItem.CreatedBy = Convert.ToInt16(Session["UserId"]);
                     inventoryItem.QualityCheckStatus = true;
-                    inventoryItem.CreationDate = DateTime.Now;
+                    inventoryItem.LastUpdated = DateTime.Now;
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
@@ -78,8 +78,6 @@ namespace NGO_Project.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", inventoryItem.UserId);
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", inventoryItem.UserId);
             return View(inventoryItem);
         }
 
@@ -96,8 +94,6 @@ namespace NGO_Project.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", inventoryItem.UserId);
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", inventoryItem.UserId);
             return View(inventoryItem);
         }
 
