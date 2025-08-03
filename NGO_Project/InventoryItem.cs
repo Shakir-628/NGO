@@ -18,10 +18,11 @@ namespace NGO_Project
         public int UserId { get; set; }
         public string ItemName { get; set; }
         public string Category { get; set; }
-        public Nullable<decimal> Quantity { get; set; }
+        public Nullable<int> Quantity { get; set; }
         public string Unit { get; set; }
-        public string QualityCheckStatus { get; set; }
+        public Nullable<bool> QualityCheckStatus { get; set; }
         public Nullable<System.DateTime> ExpirationDate { get; set; }
         public Nullable<System.DateTime> LastUpdated { get; set; }
+        public Nullable<System.DateTime> CreationDate { get; set; }
     }
 }

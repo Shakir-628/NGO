@@ -13,7 +13,6 @@
         <EntityTypeShape EntityType="NGOModel.DonationItem" Width="1.5" PointX="10.25" PointY="4.375" />
         <EntityTypeShape EntityType="NGOModel.Donation" Width="1.5" PointX="8" PointY="4.375" />
         <EntityTypeShape EntityType="NGOModel.Donor" Width="1.5" PointX="5.75" PointY="2.625" />
-        <EntityTypeShape EntityType="NGOModel.InventoryItem" Width="1.5" PointX="10.75" PointY="0.75" />
         <EntityTypeShape EntityType="NGOModel.RequestedItem" Width="1.5" PointX="3" PointY="5.375" />
         <AssociationConnector Association="NGOModel.FK__Requested__Reque__7C4F7684" />
         <AssociationConnector Association="NGOModel.FK_RequestedItems_AidRequests" />
@@ -25,6 +24,7 @@
         <EntityTypeShape EntityType="NGOModel.UserType" Width="1.5" PointX="5.75" PointY="8.875" />
         <EntityTypeShape EntityType="NGOModel.User" Width="1.5" PointX="8" PointY="8" />
         <AssociationConnector Association="NGOModel.FK_Users_UserType" />
+        <EntityTypeShape EntityType="NGOModel.InventoryItem" Width="1.5" PointX="10.375" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

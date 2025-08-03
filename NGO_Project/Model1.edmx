@@ -106,13 +106,14 @@
           </Key>
           <Property Name="ItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="UserId" Type="int" Nullable="false" />
-          <Property Name="ItemName" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="Category" Type="nvarchar" MaxLength="100" />
-          <Property Name="Quantity" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="Unit" Type="nvarchar" MaxLength="50" />
-          <Property Name="QualityCheckStatus" Type="nvarchar" MaxLength="100" />
+          <Property Name="ItemName" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Category" Type="varchar" MaxLength="100" />
+          <Property Name="Quantity" Type="int" />
+          <Property Name="Unit" Type="varchar" MaxLength="20" />
+          <Property Name="QualityCheckStatus" Type="bit" />
           <Property Name="ExpirationDate" Type="datetime" />
           <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="CreationDate" Type="datetime" />
         </EntityType>
         <EntityType Name="RequestedItems">
           <Key>
@@ -302,7 +303,6 @@
           <EntitySet Name="DonationItems" EntityType="NGOModel.DonationItem" />
           <EntitySet Name="Donations" EntityType="NGOModel.Donation" />
           <EntitySet Name="Donors" EntityType="NGOModel.Donor" />
-          <EntitySet Name="InventoryItems" EntityType="NGOModel.InventoryItem" />
           <EntitySet Name="RequestedItems" EntityType="NGOModel.RequestedItem" />
           <AssociationSet Name="FK__Requested__Reque__7C4F7684" Association="NGOModel.FK__Requested__Reque__7C4F7684">
             <End Role="AidRequest" EntitySet="AidRequests" />
@@ -338,6 +338,7 @@
             <End Role="UserType" EntitySet="UserTypes" />
             <End Role="User" EntitySet="Users" />
           </AssociationSet>
+          <EntitySet Name="InventoryItems" EntityType="NGOModel.InventoryItem" />
         </EntityContainer>
         <EntityType Name="AidRequest">
           <Key>
@@ -445,20 +446,6 @@
           <Property Name="RegistrationDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="CashDonations" Relationship="NGOModel.FK__CashDonat__Donor__5070F446" FromRole="Donor" ToRole="CashDonation" />
           <NavigationProperty Name="Donations" Relationship="NGOModel.FK__Donations__Donor__571DF1D5" FromRole="Donor" ToRole="Donation" />
-        </EntityType>
-        <EntityType Name="InventoryItem">
-          <Key>
-            <PropertyRef Name="ItemId" />
-          </Key>
-          <Property Name="ItemId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="ItemName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Category" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Quantity" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="Unit" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="QualityCheckStatus" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ExpirationDate" Type="DateTime" Precision="3" />
-          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="RequestedItem">
           <Key>
@@ -593,6 +580,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="InventoryItem">
+          <Key>
+            <PropertyRef Name="ItemId" />
+          </Key>
+          <Property Name="ItemId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="ItemName" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Category" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="Unit" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="QualityCheckStatus" Type="Boolean" />
+          <Property Name="ExpirationDate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="CreationDate" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -702,21 +704,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="InventoryItems">
-            <EntityTypeMapping TypeName="NGOModel.InventoryItem">
-              <MappingFragment StoreEntitySet="InventoryItems">
-                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
-                <ScalarProperty Name="ExpirationDate" ColumnName="ExpirationDate" />
-                <ScalarProperty Name="QualityCheckStatus" ColumnName="QualityCheckStatus" />
-                <ScalarProperty Name="Unit" ColumnName="Unit" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="Category" ColumnName="Category" />
-                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="RequestedItems">
             <EntityTypeMapping TypeName="NGOModel.RequestedItem">
               <MappingFragment StoreEntitySet="RequestedItems">
@@ -750,6 +737,22 @@
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InventoryItems">
+            <EntityTypeMapping TypeName="NGOModel.InventoryItem">
+              <MappingFragment StoreEntitySet="InventoryItems">
+                <ScalarProperty Name="CreationDate" ColumnName="CreationDate" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="ExpirationDate" ColumnName="ExpirationDate" />
+                <ScalarProperty Name="QualityCheckStatus" ColumnName="QualityCheckStatus" />
+                <ScalarProperty Name="Unit" ColumnName="Unit" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
