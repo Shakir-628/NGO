@@ -395,7 +395,10 @@
             <span class="header-title">Helping Hands Foundation Dashboard</span>
             <button class="ngo-portal">NGO Portal</button>
         </div>
-        <button class="logout-btn">Logout</button>
+        <form action="@Url.Action("Logout", "Users")" method="post" style="display:inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
     </div>
     <div class="container">
         <!-- Tabs -->
@@ -405,7 +408,7 @@
                 string currentAction = ViewContext.RouteData.Values["action"].ToString();
             }
             <div class="tabs">
-                <a class="tab @(currentController == "AidRequests" && currentAction == "Index" ? "active" : "")" href="~/AidRequests/Index">Overview</a>
+                <a class="tab @(currentController == "RequestedItems" && currentAction == "Index" ? "active" : "")" href="~/RequestedItems/Index">Overview</a>
                 <a class="tab @(currentController == "AidRequests" && currentAction == "Index" ? "active" : "")" href="~/AidRequests/Index">Aid Feed</a>
                 <a class="tab @(currentController == "InventoryItems" && currentAction == "Index" ? "active" : "")" href="~/InventoryItems/Index">Inventory</a>
                 <a class="tab @(currentController == "CashDonations" && currentAction == "Index" ? "active" : "")" href="~/CashDonations/Index">CRM</a>
@@ -418,6 +421,6 @@
             @RenderBody();
         </div>
     </div>
-
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

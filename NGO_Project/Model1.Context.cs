@@ -33,9 +33,9 @@ namespace NGO_Project
         public virtual DbSet<DonationItem> DonationItems { get; set; }
         public virtual DbSet<Donation> Donations { get; set; }
         public virtual DbSet<Donor> Donors { get; set; }
-        public virtual DbSet<InventoryItem> InventoryItems { get; set; }
         public virtual DbSet<RequestedItem> RequestedItems { get; set; }
         public virtual DbSet<UserType> UserTypes { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<InventoryItem> InventoryItems { get; set; }
     }
 }

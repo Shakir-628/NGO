@@ -1,85 +1,127 @@
-﻿@model  NGO_Project.InventoryItem
 
+@model NGO_Project.InventoryItem
 @{
     Layout = "~/Views/Shared/_LayoutNGO.cshtml";
 }
 
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
 
-<div class="tab-content">
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 18px;">
-        <button style="background: #111827; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-            <span style="font-size:1.1rem;">&#43;</span> Generate Document
+    <!-- Page Heading -->
+    <h1 class="text-3xl font-semibold text-gray-900 mb-2">Inventory tab will show the NGO current inventory status (items)</h1>
+
+    <!-- Header + Add Button -->
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Inventory Management</h2>
+        <button id="showAddItemFormBtn" class="flex items-center gap-2 px-5 py-2.5 text-white bg-gray-900 rounded-md hover:bg-gray-800 transition">
+            <span class="text-lg">➕</span> Add Item
         </button>
     </div>
-    <div style="font-size: 2rem; font-weight: 700; margin-bottom: 18px; color: #111827;">Document Management Center</div>
-    <div style="display: flex; gap: 18px; margin-bottom: 24px; flex-wrap: wrap;">
-        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
-            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">GRNs Generated <span style='font-size:1.1rem; color:#6b7280;'>&#128230;</span></div>
-            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">1</div>
-            <div style="color: #6b7280; font-size: 0.98rem;">This month</div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm text-center">
+            <p class="text-sm text-gray-500 font-medium">Total Items</p>
+            <p class="text-2xl font-bold text-gray-800">2</p>
         </div>
-        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
-            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">Receipts Issued <span style='font-size:1.1rem; color:#6b7280;'>&#128196;</span></div>
-            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">1</div>
-            <div style="color: #6b7280; font-size: 0.98rem;">This month</div>
+        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm text-center">
+            <p class="text-sm text-gray-500 font-medium">Available</p>
+            <p class="text-2xl font-bold text-green-600">2</p>
         </div>
-        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 22px 28px 18px 28px; flex: 1 1 220px; min-width: 220px; max-width: 260px; border: 1.5px solid #e5e7eb;">
-            <div style="color: #374151; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">Distribution Orders <span style='font-size:1.1rem; color:#6b7280;'>&#128230;</span></div>
-            <div style="font-size: 2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px;">1</div>
-            <div style="color: #6b7280; font-size: 0.98rem;">This month</div>
+        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm text-center">
+            <p class="text-sm text-gray-500 font-medium">Low Stock Alert</p>
+            <p class="text-2xl font-bold text-yellow-600">0</p>
         </div>
     </div>
-    <div style="background: #fff; border-radius: 10px; border: 1.5px solid #e5e7eb; padding: 24px 24px 18px 24px; margin-bottom: 28px;">
-        <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; color: #111827;">Recent Documents</div>
-        <div style="color: #6b7280; font-size: 1.05rem; margin-bottom: 18px;">Automated document generation and management</div>
-        <div style="overflow-x:auto;">
-            <table style="width:100%; border-collapse:collapse; font-size:1.05rem;">
+
+    <!-- Add Inventory Form -->
+    <div id="addItemFormContainer" class="hidden bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+        <h3 class="text-xl font-semibold text-gray-800 mb-1">Add New Inventory Item</h3>
+        <p class="text-sm text-gray-500 mb-6">Record new donations received</p>
+
+        @using (Html.BeginForm("Create", "InventoryItems", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div>
+                    <label class="block text-sm text-gray-700 mb-1">Item Name</label>
+                    @Html.TextBoxFor(m => m.ItemName, new { @class = "form-input w-full", placeholder = "Rice bags, Medicine...", required = "required" })
+                    @Html.ValidationMessageFor(m => m.ItemName, "", new { @class = "text-red-500 text-xs" })
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700 mb-1">Category</label>
+                    @Html.TextBoxFor(m => m.Category, new { @class = "form-input w-full", placeholder = "Food, Healthcare, Clothing...", required = "required" })
+                    @Html.ValidationMessageFor(m => m.Category, "", new { @class = "text-red-500 text-xs" })
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700 mb-1">Quantity</label>
+                    @Html.TextBoxFor(m => m.Quantity, new { @class = "form-input w-full", type = "number", min = "1", placeholder = "50", required = "required" })
+                    @Html.ValidationMessageFor(m => m.Quantity, "", new { @class = "text-red-500 text-xs" })
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700 mb-1">Unit</label>
+                    @Html.TextBoxFor(m => m.Unit, new { @class = "form-input w-full", placeholder = "bags, pieces, kits...", required = "required" })
+                    @Html.ValidationMessageFor(m => m.Unit, "", new { @class = "text-red-500 text-xs" })
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700 mb-1">Expiry Date (if applicable)</label>
+                    @Html.TextBoxFor(m => m.ExpirationDate, "{0:yyyy-MM-dd}", new { @class = "form-input w-full", @type = "date" })
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-4">
+                <button type="submit" class="bg-gray-900 text-white px-5 py-2 rounded-md hover:bg-gray-800 transition">Add Item</button>
+                <button type="button" id="cancelAddItemFormBtn" class="border border-gray-300 px-5 py-2 rounded-md hover:bg-gray-100 transition">Cancel</button>
+            </div>
+        }
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+        <h3 class="text-xl font-semibold text-gray-800 mb-1">Current Inventory</h3>
+        <p class="text-sm text-gray-500 mb-4">Track and manage your donation inventory</p>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm text-left border-separate border-spacing-y-2">
                 <thead>
-                    <tr style="color:#6b7280; text-align:left; border-bottom:1.5px solid #e5e7eb;">
-                        <th style="padding:10px 8px; font-weight:600;">Document ID</th>
-                        <th style="padding:10px 8px; font-weight:600;">Type</th>
-                        <th style="padding:10px 8px; font-weight:600;">Title</th>
-                        <th style="padding:10px 8px; font-weight:600;">Generated Date</th>
-                        <th style="padding:10px 8px; font-weight:600;">Status</th>
-                        <th style="padding:10px 8px; font-weight:600;">Actions</th>
+                    <tr class="text-gray-600 font-semibold border-b border-gray-200">
+                        <th class="p-2">Item Name</th>
+                        <th class="p-2">Category</th>
+                        <th class="p-2">Quantity</th>
+                        <th class="p-2">Unit</th>
+                        <th class="p-2">Status</th>
+                        <th class="p-2">Received Date</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr style="border-bottom:1px solid #f3f4f6;">
-                        <td style="padding:10px 8px; font-weight:600; color:#111827;">DOC-001</td>
-                        <td style="padding:10px 8px;"><span style='font-size:1.1rem;'>&#128230;</span> GRN</td>
-                        <td style="padding:10px 8px;">Goods Receipt Note - Rice Donation</td>
-                        <td style="padding:10px 8px;">2024-01-15</td>
-                        <td style="padding:10px 8px;"><span style="background:#dcfce7; color:#16a34a; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">COMPLETED</span></td>
-                        <td style="padding:10px 8px;">
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; margin-right:6px; cursor:pointer;" title="View">&#128065;</button>
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; cursor:pointer;" title="Download">&#128229;</button>
-                        </td>
+                <tbody class="text-gray-800">
+                    <tr class="bg-gray-50 hover:bg-gray-100 transition">
+                        <td class="p-2">Rice Bags (50kg)</td>
+                        <td class="p-2">Food</td>
+                        <td class="p-2">45</td>
+                        <td class="p-2">bags</td>
+                        <td class="p-2 text-green-600">✔️ Available</td>
+                        <td class="p-2">2025-05-25</td>
                     </tr>
-                    <tr style="border-bottom:1px solid #f3f4f6;">
-                        <td style="padding:10px 8px; font-weight:600; color:#111827;">DOC-002</td>
-                        <td style="padding:10px 8px;"><span style='font-size:1.1rem;'>&#128196;</span> Receipt</td>
-                        <td style="padding:10px 8px;">Donation Receipt - Ahmed Ali Khan</td>
-                        <td style="padding:10px 8px;">2024-01-14</td>
-                        <td style="padding:10px 8px;"><span style="background:#dcfce7; color:#16a34a; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">COMPLETED</span></td>
-                        <td style="padding:10px 8px;">
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; margin-right:6px; cursor:pointer;" title="View">&#128065;</button>
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; cursor:pointer;" title="Download">&#128229;</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:10px 8px; font-weight:600; color:#111827;">DOC-003</td>
-                        <td style="padding:10px 8px;"><span style='font-size:1.1rem;'>&#128230;</span> Distribution Order</td>
-                        <td style="padding:10px 8px;">Distribution Order - Community Center</td>
-                        <td style="padding:10px 8px;">2024-01-13</td>
-                        <td style="padding:10px 8px;"><span style="background:#fef9c3; color:#b45309; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">PENDING</span></td>
-                        <td style="padding:10px 8px;">
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; margin-right:6px; cursor:pointer;" title="View">&#128065;</button>
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:1rem; color:#111827; cursor:pointer;" title="Download">&#128229;</button>
-                        </td>
+                    <tr class="bg-gray-50 hover:bg-gray-100 transition">
+                        <td class="p-2">Medical Supplies Kit</td>
+                        <td class="p-2">Healthcare</td>
+                        <td class="p-2">12</td>
+                        <td class="p-2">kits</td>
+                        <td class="p-2 text-green-600">✔️ Available</td>
+                        <td class="p-2">2025-05-25</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<!-- Optional Script to Show/Hide Add Item Form -->
+<script>
+    document.getElementById('showAddItemFormBtn').addEventListener('click', () => {
+        document.getElementById('addItemFormContainer').classList.remove('hidden');
+    });
+    document.getElementById('cancelAddItemFormBtn').addEventListener('click', () => {
+        document.getElementById('addItemFormContainer').classList.add('hidden');
+    });
+</script>

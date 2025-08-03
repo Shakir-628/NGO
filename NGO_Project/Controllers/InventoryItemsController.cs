@@ -54,12 +54,15 @@ namespace NGO_Project.Controllers
             if (ModelState.IsValid)
             {
                 db.InventoryItems.Add(inventoryItem);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (!string.IsNullOrEmpty(Session["UserId"].ToString()))
+                {
+                    inventoryItem.UserId = Convert.ToInt16(Session["UserId"]);
+                    inventoryItem.QualityCheckStatus = true;
+                    inventoryItem.CreationDate = DateTime.Now;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
-
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", inventoryItem.UserId);
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", inventoryItem.UserId);
             return View(inventoryItem);
         }
 

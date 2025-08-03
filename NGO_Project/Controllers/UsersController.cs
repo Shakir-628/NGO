@@ -152,6 +152,10 @@ namespace NGO_Project.Controllers
             user.Created_Date = DateTime.Now;
             user.Updated_Date = DateTime.Now;
 
+            // ✅ Force default value for LastName if null
+            if (string.IsNullOrWhiteSpace(user.LastName))
+                user.LastName = "-";
+
             db.Users.Add(user);
             db.SaveChanges();
 

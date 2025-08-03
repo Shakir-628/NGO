@@ -1,312 +1,53 @@
-﻿@model NGO_Project.Donor
+﻿@model NGO_Project.Home
 
 @{
-    Layout = null;  // You can set a layout here if you want, e.g. "~/Views/Shared/_Layout.cshtml"
+    Layout = "~/Views/Shared/_LayoutNGO.cshtml";
 }
 
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-
-
-
-<head>
-    <meta charset="UTF-8">
-    <title>Material Aid Requests</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f7f8fa;
-            margin: 0;
-            padding: 0;
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 24px 32px 0 32px;
-        }
-
-            .header h2 {
-                color: #2563eb;
-                margin: 0;
-                font-size: 1.6rem;
-                display: inline;
-            }
-
-        .donor-portal {
-            background: #e0e7ff;
-            color: #2563eb;
-            border: none;
-            border-radius: 16px;
-            padding: 4px 14px;
-            font-size: 0.9rem;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-
-        .logout-btn {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 8px 18px;
-            font-size: 1rem;
-            cursor: pointer;
-            font-weight: 500;
-            margin-left: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px 16px;
-        }
-
-        .title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .subtitle {
-            color: #6b7280;
-            font-size: 1.1rem;
-            margin-bottom: 24px;
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            margin-bottom: 24px;
-            gap: 12px;
-        }
-
-            .search-bar input {
-                flex: 1;
-                padding: 10px 16px;
-                border: 1px solid #d1d5db;
-                border-radius: 8px;
-                font-size: 1rem;
-            }
-
-            .search-bar button {
-                background: #f3f4f6;
-                border: none;
-                border-radius: 8px;
-                padding: 10px 14px;
-                cursor: pointer;
-                font-size: 1.1rem;
-            }
-
-        .cards {
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            padding: 24px 20px 20px 20px;
-            flex: 1 1 320px;
-            min-width: 320px;
-            max-width: 370px;
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 24px;
-        }
-
-        .priority {
-            display: inline-block;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border-radius: 8px;
-            padding: 4px 12px;
-            margin-bottom: 8px;
-        }
-
-            .priority.high {
-                background: #fee2e2;
-                color: #b91c1c;
-            }
-
-            .priority.medium {
-                background: #fef9c3;
-                color: #b45309;
-            }
-
-        .date {
-            float: right;
-            color: #6b7280;
-            font-size: 0.98rem;
-            margin-top: 2px;
-        }
-
-        .card h3 {
-            margin: 8px 0 0 0;
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .org-link {
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.05rem;
-            margin-bottom: 8px;
-            display: inline-block;
-        }
-
-        .desc {
-            color: #374151;
-            margin: 10px 0 12px 0;
-            font-size: 1.05rem;
-        }
-
-        .location {
-            color: #6b7280;
-            font-size: 1rem;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .category {
-            background: #e0e7ff;
-            color: #3730a3;
-            border-radius: 8px;
-            padding: 4px 12px;
-            font-size: 0.95rem;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-
-        .items-needed {
-            font-weight: 600;
-            margin: 10px 0 6px 0;
-            font-size: 1.05rem;
-        }
-
-        .item-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 18px;
-        }
-
-        .item-tag {
-            background: #f3f4f6;
-            color: #374151;
-            border-radius: 16px;
-            padding: 5px 14px;
-            font-size: 0.98rem;
-            margin-bottom: 4px;
-        }
-
-        .donate-btn {
-            background: #22c55e;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 14px 0;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: auto;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div>
-            <h2>Welcome, Ahmed Ali</h2>
-            <button class="donor-portal">Donor Portal</button>
+<!-- Tab Contents -->
+<div class="tab-content" style="display:block;">
+    <!-- Dashboard Cards -->
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <div class="card-title">Active Requests <span class="card-icon">&#9432;</span></div>
+            <div class="card-value">12</div>
+            <div class="card-sub">+2 from last week</div>
         </div>
-        <button class="logout-btn">Logout</button>
+        <div class="dashboard-card">
+            <div class="card-title">Inventory Items <span class="card-icon">&#9432;</span></div>
+            <div class="card-value">247</div>
+            <div class="card-sub">85% in stock</div>
+        </div>
+        <div class="dashboard-card">
+            <div class="card-title">Active Donors <span class="card-icon">&#128101;</span></div>
+            <div class="card-value">156</div>
+            <div class="card-sub">+12 this month</div>
+        </div>
+        <div class="dashboard-card refused">
+            <div class="card-title">Refused Requests <span class="card-icon">&#9888;</span></div>
+            <div class="card-value">3</div>
+            <div class="card-sub">Need attention</div>
+        </div>
     </div>
-    <div class="container">
-        <div class="title">Material Aid Requests</div>
-        <div class="subtitle">Help NGOs by donating needed items directly</div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search items needed..." disabled>
-            <button title="Filter" disabled><span>&#128269;</span></button>
-        </div>
-        <div class="cards">
-            <!-- Card 1 -->
-            <div class="card">
-                <span class="priority high">HIGH PRIORITY</span>
-                <span class="date">1/15/2024</span>
-                <h3>Emergency Food Relief - Flood Victims</h3>
-                <a class="org-link" href="#">Helping Hands Foundation</a>
-                <div class="desc">
-                    Urgent need for dry rations for 200 families affected by recent floods in Sindh. We need rice, flour, cooking oil, and basic household items.
+    <!-- Frequently Refused Requests -->
+    <div class="refused-requests-box">
+        <div class="refused-title">&#9888; Frequently Refused Requests</div>
+        <div class="refused-desc">Items refused 5+ times – consider posting to public feed</div>
+        <div class="refused-list">
+            <div class="refused-item">
+                <div>
+                    <div class="refused-item-title">Winter Blankets</div>
+                    <div class="refused-item-desc">Refused 7 times in last month</div>
                 </div>
-                <div class="location">&#128205; Sindh, Pakistan</div>
-                <div class="category">Food & Nutrition</div>
-                <div class="items-needed">Items Needed:</div>
-                <div class="item-tags">
-                    <span class="item-tag">Rice (50kg bags)</span>
-                    <span class="item-tag">Flour (20kg bags)</span>
-                    <span class="item-tag">Cooking Oil (5L)</span>
-                    <span class="item-tag">Lentils (10kg)</span>
-                    <span class="item-tag">+2 more</span>
-                </div>
-                <button class="donate-btn">&#10084; Donate Items</button>
+                <button class="post-btn">Post to Feed</button>
             </div>
-            <!-- Card 2 -->
-            <div class="card">
-                <span class="priority medium">MEDIUM PRIORITY</span>
-                <span class="date">1/10/2024</span>
-                <h3>Winter Clothing Drive for Children</h3>
-                <a class="org-link" href="#">Child Welfare Trust</a>
-                <div class="desc">
-                    With winter approaching, we need warm clothing for 150 children in our care. Sweaters, jackets, blankets, and winter shoes are urgently needed.
+            <div class="refused-item">
+                <div>
+                    <div class="refused-item-title">Medical Supplies</div>
+                    <div class="refused-item-desc">Refused 5 times in last month</div>
                 </div>
-                <div class="location">&#128205; Lahore, Punjab</div>
-                <div class="category">Clothing</div>
-                <div class="items-needed">Items Needed:</div>
-                <div class="item-tags">
-                    <span class="item-tag">Winter Jackets (sizes 4-14)</span>
-                    <span class="item-tag">Sweaters</span>
-                    <span class="item-tag">Warm Blankets</span>
-                    <span class="item-tag">Winter Shoes</span>
-                    <span class="item-tag">+2 more</span>
-                </div>
-                <button class="donate-btn">&#10084; Donate Items</button>
-            </div>
-            <!-- Card 3 -->
-            <div class="card">
-                <span class="priority medium">MEDIUM PRIORITY</span>
-                <span class="date">1/8/2024</span>
-                <h3>Medical Supplies for Rural Clinic</h3>
-                <a class="org-link" href="#">Rural Health Initiative</a>
-                <div class="desc">
-                    Our rural health clinic serves 500+ families but lacks basic medical equipment and supplies.
-                </div>
-                <div class="location">&#128205; Multan, Punjab</div>
-                <div class="category">Healthcare</div>
-                <div class="items-needed">Items Needed:</div>
-                <div class="item-tags">
-                    <span class="item-tag">Stethoscopes</span>
-                    <span class="item-tag">BP Monitors</span>
-                    <span class="item-tag">Thermometers</span>
-                    <span class="item-tag">First Aid Kits</span>
-                    <span class="item-tag">+2 more</span>
-                </div>
-                <button class="donate-btn">&#10084; Donate Items</button>
+                <button class="post-btn">Post to Feed</button>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
