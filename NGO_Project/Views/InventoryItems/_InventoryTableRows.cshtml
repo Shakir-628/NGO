@@ -1,0 +1,28 @@
+﻿@model IEnumerable<NGO_Project.InventoryItem>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@Html.DisplayFor(modelItem => item.ItemName)</td>
+        <td>@Html.DisplayFor(modelItem => item.Category)</td>
+        <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
+        <td>@Html.DisplayFor(modelItem => item.Unit)</td>
+        @{
+            string statusClass = "available";
+            string statusText = "Available";
+
+            if (item.Quantity <= 5 && item.Quantity > 0)
+            {
+                statusClass = "low-stock";
+                statusText = "Low Stock";
+            }
+            else if (item.Quantity == 0)
+            {
+                statusClass = "out-of-stock";
+                statusText = "Out of Stock";
+            }
+        }
+        <td><span class="status @statusClass">@statusText</span></td>
+        <td>@Html.DisplayFor(modelItem => item.LastUpdated)</td>
+    </tr>
+}
