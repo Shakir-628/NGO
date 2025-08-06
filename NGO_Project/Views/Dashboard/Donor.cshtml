@@ -1,4 +1,4 @@
-﻿@model IEnumerable<NGO_Project.AidRequest>
+﻿@model IEnumerable<dynamic>
 
 @{
     Layout = null;
@@ -11,7 +11,214 @@
     <title>Material Aid Requests</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* ... (Your CSS styles from the previous response) ... */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7f8fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 32px 0 32px;
+        }
+
+            .header h2 {
+                color: #2563eb;
+                margin: 0;
+                font-size: 1.6rem;
+                display: inline;
+            }
+
+        .donor-portal {
+            background: #e0e7ff;
+            color: #2563eb;
+            border: none;
+            border-radius: 16px;
+            padding: 4px 14px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            margin-left: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 12px;
+        }
+
+            .search-bar input {
+                flex: 1;
+                padding: 10px 16px;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 1rem;
+            }
+
+            .search-bar button {
+                background: #f3f4f6;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 14px;
+                cursor: pointer;
+                font-size: 1.1rem;
+            }
+
+        .cards {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 24px 20px 20px 20px;
+            flex: 1 1 320px;
+            min-width: 320px;
+            max-width: 370px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 24px;
+        }
+
+        .priority {
+            display: inline-block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 4px 12px;
+            margin-bottom: 8px;
+        }
+
+            .priority.high {
+                background: #fee2e2;
+                color: #b91c1c;
+            }
+
+            .priority.medium {
+                background: #fef9c3;
+                color: #b45309;
+            }
+
+        .date {
+            float: right;
+            color: #6b7280;
+            font-size: 0.98rem;
+            margin-top: 2px;
+        }
+
+        .card h3 {
+            margin: 8px 0 0 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .org-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .desc {
+            color: #374151;
+            margin: 10px 0 12px 0;
+            font-size: 1.05rem;
+        }
+
+        .location {
+            color: #6b7280;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .category {
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-size: 0.95rem;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .items-needed {
+            font-weight: 600;
+            margin: 10px 0 6px 0;
+            font-size: 1.05rem;
+        }
+
+        .item-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .item-tag {
+            background: #f3f4f6;
+            color: #374151;
+            border-radius: 16px;
+            padding: 5px 14px;
+            font-size: 0.98rem;
+            margin-bottom: 4px;
+        }
+
+        .donate-btn {
+            background: #22c55e;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: auto;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -34,40 +241,38 @@
             <input type="text" placeholder="Search items needed..." disabled>
             <button title="Filter" disabled><span>&#128269;</span></button>
         </div>
+        @*
+        Corrected code to handle a null model.
+        The check `Model != null` is added before calling .Any().
+        *@
         <div class="cards">
-            @if (!Model.Any())
+            @if (Model == null || !Model.Any())
             {
                 <div style="text-align: center; width: 100%; color: #6b7280; padding: 40px;">No active aid requests available at the moment. Please check back later!</div>
             }
             else
             {
-                @foreach (var request in Model)
+                foreach (var item in Model)
                 {
                     <div class="card">
                         @{
                             string priorityClass = "";
-                            if (request.UrgencyLevel != null)
+                            if (item.AidRequest.UrgencyLevel != null)
                             {
-                                priorityClass = request.UrgencyLevel.Replace(" ", "").ToLower();
+                                priorityClass = item.AidRequest.UrgencyLevel.Replace(" ", "").ToLower();
                             }
                         }
-                        <span class="priority @priorityClass">@request.UrgencyLevel.ToUpper()</span>
-                        <span class="date">@request.PostDate.ToString("M/d/yyyy")</span>
-                        <h3>@request.RequestTitle</h3>
-                        @* The NGO name is derived from the FirstName and LastName of the User table. *@
-                        <a class="org-link" href="#">@(request.User?.FirstName + " " + request.User?.LastName)</a>
+                        <span class="priority @priorityClass">@item.AidRequest.UrgencyLevel.ToUpper()</span>
+                        <span class="date">@item.AidRequest.PostDate.ToString("M/d/yyyy")</span>
+                        <h3>@item.AidRequest.RequestTitle</h3>
+                        <a class="org-link" href="#">@(item.User.FirstName + " " + item.User.LastName)</a>
                         <div class="desc">
-                            @request.Description
+                            @item.AidRequest.Description
                         </div>
-                        <div class="location">&#128205; @request.Location</div>
-                        <div class="category">@request.Category</div>
+                        <div class="location">&#128205; @item.AidRequest.Location</div>
+                        <div class="category">@item.AidRequest.Category</div>
                         <div class="items-needed">Items Needed:</div>
                         <div class="item-tags">
-                            @* The provided schema for dbo.AidRequests does not contain an 'Items Needed' column.
-                                This data is likely in a separate, related table (e.g., RequestedItems).
-                                You will need to query and loop through that table here once it is available.
-                                For now, this is a placeholder.
-                            *@
                             <span class="item-tag">Items not specified</span>
                         </div>
                         <button class="donate-btn">&#10084; Donate Items</button>
