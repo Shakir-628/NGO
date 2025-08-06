@@ -18,7 +18,7 @@ namespace NGO_Project.Controllers
         public ActionResult Index()
         {
             return View(db.Donors.ToList());
-        }
+        } 
 
         // GET: Donors/Details/5
         public ActionResult Details(int? id)
