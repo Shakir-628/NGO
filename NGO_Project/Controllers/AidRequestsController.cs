@@ -17,9 +17,42 @@ namespace NGO_Project.Controllers
         // GET: AidRequests
         public ActionResult Index()
         {
-            //var aidRequests = db.AidRequests.Include(a => a.RequestedItem);
-            return View();
+            // Fetch all active aid requests and pass them to the view.
+            var aidRequests = db.AidRequests.Where(r => r.IsActive == true).ToList();
+            return View(aidRequests);
         }
+
+        // POST: AidRequests/PostRequest
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PostRequest([Bind(Include = "RequestTitle,Description,Category,UrgencyLevel,Location,RequestedItems")] AidRequest aidRequest, string itemsNeeded)
+        {
+            // Assuming UserId is retrieved from the logged-in session.
+            // For this example, we'll use a hardcoded value.
+            // In a real application, you'd get this from a User session object.
+            aidRequest.UserId = 1; // Example: Set a hardcoded UserID
+
+            if (ModelState.IsValid)
+            {
+                aidRequest.PostDate = DateTime.Now;
+                aidRequest.IsActive = true; // Set to true for new requests
+
+                // This part depends on how you handle requested items.
+                // Assuming you have a separate table for RequestedItems.
+                // You would need to split the 'itemsNeeded' string and create
+                // new entries in the RequestedItems table, then associate them
+                // with the new AidRequest.
+
+                db.AidRequests.Add(aidRequest);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            // If the model is not valid, you might want to return an error or handle it gracefully.
+            // For now, we'll just redirect to the index page.
+            return RedirectToAction("Index");
+        }
+
 
         // GET: AidRequests/Details/5
         public ActionResult Details(int? id)
@@ -39,29 +72,25 @@ namespace NGO_Project.Controllers
         // GET: AidRequests/Create
         public ActionResult Create()
         {
+            // Assuming your User entity has FirstName
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName");
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName");
-            ViewBag.RequestId = new SelectList(db.RequestedItems, "RequestedItemId", "ItemName");
             return View();
         }
 
         // POST: AidRequests/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "RequestId,UserId,RequestTitle,Description,Category,UrgencyLevel,Location,PostDate,IsActive")] AidRequest aidRequest)
         {
             if (ModelState.IsValid)
             {
+                aidRequest.PostDate = DateTime.Now;
                 db.AidRequests.Add(aidRequest);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
-            ViewBag.RequestId = new SelectList(db.RequestedItems, "RequestedItemId", "ItemName", aidRequest.RequestId);
             return View(aidRequest);
         }
 
@@ -78,14 +107,10 @@ namespace NGO_Project.Controllers
                 return HttpNotFound();
             }
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
-            ViewBag.RequestId = new SelectList(db.RequestedItems, "RequestedItemId", "ItemName", aidRequest.RequestId);
             return View(aidRequest);
         }
 
         // POST: AidRequests/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "RequestId,UserId,RequestTitle,Description,Category,UrgencyLevel,Location,PostDate,IsActive")] AidRequest aidRequest)
@@ -97,8 +122,6 @@ namespace NGO_Project.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
-            ViewBag.RequestId = new SelectList(db.RequestedItems, "RequestedItemId", "ItemName", aidRequest.RequestId);
             return View(aidRequest);
         }
 

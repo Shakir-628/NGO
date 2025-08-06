@@ -14,10 +14,23 @@ namespace NGO_Project.Controllers
     {
         private NGOEntities db = new NGOEntities();
 
-        // GET: Donors
+        // GET: Donors/Home
         public ActionResult Home()
         {
-            return View();
+            // Join AidRequests with Users on the UserId column to get the user (NGO) details.
+            var aidRequestsWithUsers = (from ar in db.AidRequests
+                                        join u in db.Users on ar.UserId equals u.UserId
+                                        where ar.IsActive == true
+                                        orderby ar.PostDate descending
+                                        select new
+                                        {
+                                            AidRequest = ar,
+                                            User = u
+                                        }).ToList();
+
+            // Pass the list of anonymous objects to the view.
+            // The view will now access data through this new structure (e.g., item.AidRequest.RequestTitle).
+            return View(aidRequestsWithUsers);
         }
 
         // GET: Donors/Details/5
@@ -42,17 +55,16 @@ namespace NGO_Project.Controllers
         }
 
         // POST: Donors/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "UserId,FullName,Email,PhoneNumber,Location,PasswordHash,RegistrationDate")] Donor donor)
         {
             if (ModelState.IsValid)
             {
+                donor.RegistrationDate = DateTime.Now;
                 db.Donors.Add(donor);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Home");
             }
 
             return View(donor);
@@ -74,8 +86,6 @@ namespace NGO_Project.Controllers
         }
 
         // POST: Donors/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "UserId,FullName,Email,PhoneNumber,Location,PasswordHash,RegistrationDate")] Donor donor)
@@ -84,7 +94,7 @@ namespace NGO_Project.Controllers
             {
                 db.Entry(donor).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Home");
             }
             return View(donor);
         }
@@ -112,7 +122,7 @@ namespace NGO_Project.Controllers
             Donor donor = db.Donors.Find(id);
             db.Donors.Remove(donor);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Home");
         }
 
         protected override void Dispose(bool disposing)
