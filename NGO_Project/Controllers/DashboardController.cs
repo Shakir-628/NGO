@@ -9,6 +9,8 @@ namespace NGO_Project.Controllers
     public class DashboardController : Controller
     {
         // GET: Dashboard
+
+        private NGOEntities db = new NGOEntities();
         public ActionResult Index()
         {
             if (Session["UserId"] == null) 

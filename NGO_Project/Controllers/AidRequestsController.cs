@@ -22,38 +22,6 @@ namespace NGO_Project.Controllers
             return View(aidRequests);
         }
 
-        // POST: AidRequests/PostRequest
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult PostRequest([Bind(Include = "RequestTitle,Description,Category,UrgencyLevel,Location,RequestedItems")] AidRequest aidRequest, string itemsNeeded)
-        {
-            // Assuming UserId is retrieved from the logged-in session.
-            // For this example, we'll use a hardcoded value.
-            // In a real application, you'd get this from a User session object.
-            aidRequest.UserId = 1; // Example: Set a hardcoded UserID
-
-            if (ModelState.IsValid)
-            {
-                aidRequest.PostDate = DateTime.Now;
-                aidRequest.IsActive = true; // Set to true for new requests
-
-                // This part depends on how you handle requested items.
-                // Assuming you have a separate table for RequestedItems.
-                // You would need to split the 'itemsNeeded' string and create
-                // new entries in the RequestedItems table, then associate them
-                // with the new AidRequest.
-
-                db.AidRequests.Add(aidRequest);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            // If the model is not valid, you might want to return an error or handle it gracefully.
-            // For now, we'll just redirect to the index page.
-            return RedirectToAction("Index");
-        }
-
-
         // GET: AidRequests/Details/5
         public ActionResult Details(int? id)
         {
@@ -85,6 +53,8 @@ namespace NGO_Project.Controllers
             if (ModelState.IsValid)
             {
                 aidRequest.PostDate = DateTime.Now;
+                aidRequest.IsActive = true; // Set to true for new requests
+                aidRequest.UserId = Convert.ToInt16(Session["UserId"]);
                 db.AidRequests.Add(aidRequest);
                 db.SaveChanges();
                 return RedirectToAction("Index");
