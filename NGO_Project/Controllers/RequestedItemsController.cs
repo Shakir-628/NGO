@@ -17,8 +17,10 @@ namespace NGO_Project.Controllers
         // GET: RequestedItems
         public ActionResult Index()
         {
-            //var requestedItems = db.RequestedItems.Include(r => r.AidRequest).Include(r => r.AidRequest1);
-            return View();
+
+            var requestedItems = db.RequestedItems
+    .Include(r => r.AidRequest).ToList();
+            return View(requestedItems);
         }
 
         // GET: RequestedItems/Details/5
@@ -122,6 +124,27 @@ namespace NGO_Project.Controllers
             db.RequestedItems.Remove(requestedItem);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public JsonResult UpdateIsPosted(int id)
+        {
+            try
+            {
+               
+                    var request = db.AidRequests.FirstOrDefault(r => r.RequestId == id);
+                    if (request == null)
+                        return Json(new { success = false, message = "Record not found." });
+
+                    request.IsPosted = 1;
+                    db.SaveChanges();
+
+                    return Json(new { success = true, message = "Updated successfully." });
+                
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         protected override void Dispose(bool disposing)

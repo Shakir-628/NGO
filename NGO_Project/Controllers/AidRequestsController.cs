@@ -48,15 +48,35 @@ namespace NGO_Project.Controllers
         // POST: AidRequests/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "RequestId,UserId,RequestTitle,Description,Category,UrgencyLevel,Location,PostDate,IsActive")] AidRequest aidRequest)
+        public ActionResult Create(
+     [Bind(Include = "RequestId,UserId,RequestTitle,Description,Category,UrgencyLevel,Location")] AidRequest aidRequest,
+     [Bind(Include = "ItemName,Quantity,Unit")] RequestedItem requestedItem
+ )
         {
             if (ModelState.IsValid)
             {
+                // 1️⃣ Save AidRequest first
                 aidRequest.PostDate = DateTime.Now;
-                aidRequest.IsActive = true; // Set to true for new requests
+                aidRequest.IsActive = true;
                 aidRequest.UserId = Convert.ToInt16(Session["UserId"]);
+
                 db.AidRequests.Add(aidRequest);
+                db.SaveChanges(); // This will generate RequestId
+
+                // 2️⃣ Save RequestedItem linked to the AidRequest
+                requestedItem.RequestId = aidRequest.RequestId; // FK link
+
+                // (Optional defaults to avoid nulls if form doesn’t send data)
+                if (string.IsNullOrWhiteSpace(requestedItem.ItemName))
+                    requestedItem.ItemName = aidRequest.RequestTitle;
+                if (requestedItem.Quantity <= 0)
+                    requestedItem.Quantity = 1;
+                if (string.IsNullOrWhiteSpace(requestedItem.Unit))
+                    requestedItem.Unit = "pcs";
+
+                db.RequestedItems.Add(requestedItem);
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
