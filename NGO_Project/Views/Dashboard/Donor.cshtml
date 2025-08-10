@@ -246,7 +246,7 @@
         The check `Model != null` is added before calling .Any().
         *@
         <div class="cards">
-            @if (Model == null || !Model.Any())
+            @if (Model.Count()<0  || !Model.Any())
             {
                 <div style="text-align: center; width: 100%; color: #6b7280; padding: 40px;">No active aid requests available at the moment. Please check back later!</div>
             }

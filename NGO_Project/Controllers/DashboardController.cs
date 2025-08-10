@@ -39,36 +39,40 @@ namespace NGO_Project.Controllers
         {
             if (Session["UserId"] == null)
             {
-
                 return RedirectToAction("Login", "Users");
-
-
-                Response.Cache.SetCacheability(HttpCacheability.NoCache);
-                Response.Cache.SetExpires(DateTime.UtcNow.AddSeconds(-1));
-                Response.Cache.SetNoStore();
             }
-            // Join AidRequests with Users on the UserId column to get the user (NGO) details.
+
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.Cache.SetExpires(DateTime.UtcNow.AddSeconds(-1));
+            Response.Cache.SetNoStore();
+
             var aidRequestsWithUsers = (from ar in db.AidRequests
                                         join u in db.Users on ar.UserId equals u.UserId
-                                        where ar.IsActive == true
+                                        where  ar.IsPosted == 1
                                         orderby ar.PostDate descending
                                         select new
                                         {
                                             AidRequest = ar,
                                             User = u
-                                        }).ToList();
+                                        })
+                                        .ToList<dynamic>().Select(x =>
+                                        {
+                                            dynamic obj = new System.Dynamic.ExpandoObject();
+                                            obj.AidRequest = x.AidRequest;
+                                            obj.User = x.User;
+                                            return obj;
+                                        }).ToList();  // important to cast for IEnumerable<dynamic>
 
-            // Pass the list of anonymous objects to the view.
-            // The view will now access data through this new structure (e.g., item.AidRequest.RequestTitle).
             return View(aidRequestsWithUsers);
         }
+
         //public ActionResult Donor()
         //{
         //    if (Session["UserId"] == null)
         //    {
 
         //        return RedirectToAction("Login", "Users");
-                   
+
 
         //        Response.Cache.SetCacheability(HttpCacheability.NoCache);
         //        Response.Cache.SetExpires(DateTime.UtcNow.AddSeconds(-1));
