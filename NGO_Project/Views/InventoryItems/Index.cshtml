@@ -25,6 +25,13 @@
             background: #1f2937;
         }
 
+    /* Force Add Item button to always be visible */
+    #showAddItemFormBtn {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
     .summary-card {
         background: #fff;
         border-radius: 12px;
@@ -242,12 +249,21 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Event listener to show the form
+            // Ensure Add Item button never hides
+            const addItemBtn = document.getElementById("showAddItemFormBtn");
+            const observer = new MutationObserver(() => {
+                addItemBtn.style.display = "inline-flex";
+                addItemBtn.style.visibility = "visible";
+                addItemBtn.style.opacity = "1";
+            });
+            observer.observe(addItemBtn, { attributes: true, attributeFilter: ["style", "class"] });
+
+            // Show form
             $("#showAddItemFormBtn").on("click", function () {
                 $("#addItemFormContainer").show();
             });
 
-            // Event listener to hide the form
+            // Hide form
             $("#cancelAddItemFormBtn").on("click", function () {
                 $("#addItemFormContainer").hide();
                 $("#addItemForm")[0].reset();
@@ -255,7 +271,7 @@
 
             // AJAX form submission
             $("#addItemForm").on("submit", function (e) {
-                e.preventDefault(); // Prevent the default form submission
+                e.preventDefault();
 
                 var form = $(this);
                 var url = form.attr("action");
@@ -267,34 +283,25 @@
                     data: formData,
                     success: function (response) {
                         if (response.success) {
-                            // On success, hide the form and refresh the table content
                             $("#addItemFormContainer").hide();
                             $("#addItemForm")[0].reset();
-
-                            // Use SweetAlert for a success message
                             swal("Success!", "Item added successfully.", "success");
 
-                            // Call the controller action to get the updated list of items
                             $.get("/InventoryItems/GetInventoryItems", function (data) {
                                 $("#inventoryTableBody").html(data);
                             });
 
-                            // Call the controller action to get the updated summary data
                             $.get("/InventoryItems/GetSummaryData", function (data) {
                                 $("#totalItems").text(data.total);
                                 $("#availableItems").text(data.available);
                                 $("#lowStockItems").text(data.lowStock);
                             });
-
                         } else {
-                            // Use SweetAlert for an error message
                             swal("Error!", "An error occurred: " + response.errors, "error");
                         }
                     },
-                    error: function (xhr, status, error) {
-                        // Use SweetAlert for a server-side error message
+                    error: function () {
                         swal("Error!", "An error occurred while adding the item.", "error");
-                        console.error(xhr.responseText);
                     }
                 });
             });
