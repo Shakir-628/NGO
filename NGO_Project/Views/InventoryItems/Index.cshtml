@@ -148,9 +148,16 @@
 
 <div class="tab-content">
     <div style="display: flex; justify-content: flex-end; margin-bottom: 18px;">
-        <button id="showAddItemFormBtn" class="btn-primary">
-            <span style="font-size:1.1rem;"></span> Add Item
-        </button>
+        <div class="row" style="display: flex; gap: 10px; align-items: center;">
+            <button id="showAddItemFormBtn" class="btn-primary" style="padding: 10px 22px; font-size: 1rem; font-weight: 600;">
+                <span style="font-size:1.1rem;"></span> Add Item
+            </button>
+            <button id="openFeedModalBtn"  class="btn-primary"  style="background: #111827; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                Add New Category
+            </button>
+        </div>
+
+
     </div>
 
     <div style="font-size: 2rem; font-weight: 700; margin-bottom: 18px; color: #111827;">Inventory Management</div>
@@ -235,69 +242,100 @@
             </table>
         </div>
     </div>
+
+    <div class="modal-bg" id="feedModalBg">
+        <div class="modal-content">
+            <h2>Add New Category</h2>
+
+            @using (Html.BeginForm("CreateCategory", "InventoryItems", FormMethod.Post, new { id = "createCategoryForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-form-row">
+                    <div class="modal-form-group">
+                        <label for="CategoryName">Category</label>
+                        @Html.TextBox("CategoryName", null, new { @id = "CategoryName", @placeholder = "Enter Category..." })
+                    </div>
+                </div>
+
+                <div class="modal-form-actions">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="secondary" id="cancelFeedModalBtn">Cancel</button>
+                </div>
+            }
+        </div>
+    </div>
+
 </div>
 
 @section scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
-        $(document).ready(function () {
-            // Event listener to show the form
-            $("#showAddItemFormBtn").on("click", function () {
-                $("#addItemFormContainer").show();
-            });
+        $(function () {
 
-            // Event listener to hide the form
-            $("#cancelAddItemFormBtn").on("click", function () {
-                $("#addItemFormContainer").hide();
-                $("#addItemForm")[0].reset();
-            });
+            // Generic AJAX form handler
+            function bindAjaxForm(formSelector, onSuccess) {
+                $(formSelector).on("submit", function (e) {
+                    e.preventDefault();
 
-            // AJAX form submission
-            $("#addItemForm").on("submit", function (e) {
-                e.preventDefault(); // Prevent the default form submission
+                    var form = $(this);
+                    var url = form.attr("action");
+                    var formData = form.serialize();
 
-                var form = $(this);
-                var url = form.attr("action");
-                var formData = form.serialize();
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: formData,
+                        success: function (response) {
+                            if (response.success) {
+                                swal("Success!", "Operation completed successfully.", "success");
+                                form[0].reset();
 
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    data: formData,
-                    success: function (response) {
-                        if (response.success) {
-                            // On success, hide the form and refresh the table content
-                            $("#addItemFormContainer").hide();
-                            $("#addItemForm")[0].reset();
-
-                            // Use SweetAlert for a success message
-                            swal("Success!", "Item added successfully.", "success");
-
-                            // Call the controller action to get the updated list of items
-                            $.get("/InventoryItems/GetInventoryItems", function (data) {
-                                $("#inventoryTableBody").html(data);
-                            });
-
-                            // Call the controller action to get the updated summary data
-                            $.get("/InventoryItems/GetSummaryData", function (data) {
-                                $("#totalItems").text(data.total);
-                                $("#availableItems").text(data.available);
-                                $("#lowStockItems").text(data.lowStock);
-                            });
-
-                        } else {
-                            // Use SweetAlert for an error message
-                            swal("Error!", "An error occurred: " + response.errors, "error");
+                                if (typeof onSuccess === "function") {
+                                    onSuccess(response);
+                                }
+                            } else {
+                                swal("Error!", response.errors || "An error occurred.", "error");
+                            }
+                        },
+                        error: function () {
+                            swal("Error!", "A server error occurred.", "error");
                         }
-                    },
-                    error: function (xhr, status, error) {
-                        // Use SweetAlert for a server-side error message
-                        swal("Error!", "An error occurred while adding the item.", "error");
-                        console.error(xhr.responseText);
-                    }
+                    });
+                });
+            }
+
+            // Bind Add Item form
+            bindAjaxForm("#addItemForm", function () {
+                $("#addItemFormContainer").hide();
+
+                // Refresh inventory table
+                $.get("/InventoryItems/GetInventoryItems", function (data) {
+                    $("#inventoryTableBody").html(data);
+                });
+
+                // Refresh summary data
+                $.get("/InventoryItems/GetSummaryData", function (data) {
+                    $("#totalItems").text(data.total);
+                    $("#availableItems").text(data.available);
+                    $("#lowStockItems").text(data.lowStock);
                 });
             });
+
+            // Bind Create Category form
+            bindAjaxForm("#createCategoryForm", function () {
+                $("#feedModalBg").hide();
+
+               
+              
+            });
+
+            // Modal cancel button
+            $("#cancelFeedModalBtn").on("click", function () {
+                $("#feedModalBg").hide();
+            });
+
         });
     </script>
+
 }

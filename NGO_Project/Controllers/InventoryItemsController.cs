@@ -119,7 +119,25 @@ namespace NGO_Project.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateCategory([Bind(Include = "CategoryName")]  Category viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Session["UserId"] != null && !string.IsNullOrEmpty(Session["UserId"].ToString()))
+                {
+                   
 
+                    db.Categories.Add(viewModel);
+                    db.SaveChanges();
+
+                    return Json(new { success = true });
+                }
+            }
+
+            return Json(new { success = false, errors = "Invalid data submitted or user not logged in." });
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
