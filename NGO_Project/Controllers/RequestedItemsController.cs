@@ -130,22 +130,39 @@ namespace NGO_Project.Controllers
         {
             try
             {
-               
-                    var request = db.AidRequests.FirstOrDefault(r => r.RequestId == id);
-                    if (request == null)
-                        return Json(new { success = false, message = "Record not found." });
+                var itemRequest = db.RequestedItems.FirstOrDefault(r => r.RequestedItemId == id);
+                if (itemRequest == null)
+                    return Json(new { success = false, message = "Requested item not found." });
 
-                    request.IsPosted = 1;
-                    db.SaveChanges();
+                var airRequest = db.AidRequests.FirstOrDefault(r => r.RequestId == itemRequest.RequestId);
+                if (airRequest == null)
+                    return Json(new { success = false, message = "Aid request not found." });
 
-                    return Json(new { success = true, message = "Updated successfully." });
-                
+                // Update IsPosted first
+                airRequest.IsPosted = 1;
+                db.Entry(airRequest).State = EntityState.Modified;
+                db.SaveChanges();
+
+                // Update itemRequest count
+                if (itemRequest.ItemRequestCount == 0 || itemRequest.ItemRequestCount == null)
+                {
+                    itemRequest.ItemRequestCount = 1;
+                }
+                else
+                {
+                    itemRequest.ItemRequestCount += 1;
+                }
+                db.Entry(itemRequest).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Updated successfully." });
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
 
         protected override void Dispose(bool disposing)
         {

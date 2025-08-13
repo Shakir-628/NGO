@@ -22,7 +22,7 @@ namespace NGO_Project.Controllers
                 NewItem = new InventoryItem(),
                 InventoryItems = db.InventoryItems.ToList()
             };
-
+            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
             return View(viewModel);
         }
 
@@ -42,6 +42,7 @@ namespace NGO_Project.Controllers
                     db.InventoryItems.Add(viewModel.NewItem);
                     db.SaveChanges();
 
+                    ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
                     return Json(new { success = true });
                 }
             }
@@ -69,13 +70,6 @@ namespace NGO_Project.Controllers
         }
 
         // The other CRUD actions (Details, Edit, Delete) are included for completeness.
-        public ActionResult Details(int? id)
-        {
-            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            InventoryItem inventoryItem = db.InventoryItems.Find(id);
-            if (inventoryItem == null) return HttpNotFound();
-            return View(inventoryItem);
-        }
 
         public ActionResult Edit(int? id)
         {
@@ -126,12 +120,11 @@ namespace NGO_Project.Controllers
             if (ModelState.IsValid)
             {
                 if (Session["UserId"] != null && !string.IsNullOrEmpty(Session["UserId"].ToString()))
-                {
-                   
-
+                {                  
                     db.Categories.Add(viewModel);
                     db.SaveChanges();
 
+                    ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
                     return Json(new { success = true });
                 }
             }

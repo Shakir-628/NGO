@@ -18,23 +18,13 @@ namespace NGO_Project.Controllers
         public ActionResult Index()
         {
             // Fetch all active aid requests and pass them to the view.
-            var aidRequests = db.AidRequests.Where(r => r.IsActive == true).ToList();
-            return View(aidRequests);
-        }
+            var aidRequests = db.AidRequests.Include(a => a.Category)
+    .Where(r => r.IsActive == true)
+    .OrderByDescending(r => r.RequestId) // or r.CreatedDate
+    .ToList();
 
-        // GET: AidRequests/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AidRequest aidRequest = db.AidRequests.Find(id);
-            if (aidRequest == null)
-            {
-                return HttpNotFound();
-            }
-            return View(aidRequest);
+            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
+            return View(aidRequests);
         }
 
         // GET: AidRequests/Create
@@ -42,6 +32,7 @@ namespace NGO_Project.Controllers
         {
             // Assuming your User entity has FirstName
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName");
+            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
             return View();
         }
 
@@ -49,39 +40,38 @@ namespace NGO_Project.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(
-     [Bind(Include = "RequestId,UserId,RequestTitle,Description,Category,UrgencyLevel,Location")] AidRequest aidRequest,
-     [Bind(Include = "ItemName,Quantity,Unit")] RequestedItem requestedItem
+                [Bind(Include = "RequestId,UserId,RequestTitle,Description,CategoryId,UrgencyLevel,Location")] AidRequest aidRequest,
+                [Bind(Include = "ItemName,Quantity,Unit,ItemRequestCount")] RequestedItem requestedItem
  )
         {
-            if (ModelState.IsValid)
-            {
-                // 1️⃣ Save AidRequest first
-                aidRequest.PostDate = DateTime.Now;
-                aidRequest.IsActive = true;
-                aidRequest.UserId = Convert.ToInt16(Session["UserId"]);
 
-                db.AidRequests.Add(aidRequest);
-                db.SaveChanges(); // This will generate RequestId
+            // 1️⃣ Save AidRequest first
+            aidRequest.PostDate = DateTime.Now;
+            aidRequest.IsActive = true;
+            aidRequest.UserId = Convert.ToInt16(Session["UserId"]);
 
-                // 2️⃣ Save RequestedItem linked to the AidRequest
-                requestedItem.RequestId = aidRequest.RequestId; // FK link
+            db.AidRequests.Add(aidRequest);
+            db.SaveChanges(); // This will generate RequestId
 
-                // (Optional defaults to avoid nulls if form doesn’t send data)
-                if (string.IsNullOrWhiteSpace(requestedItem.ItemName))
-                    requestedItem.ItemName = aidRequest.RequestTitle;
-                if (requestedItem.Quantity <= 0)
-                    requestedItem.Quantity = 1;
-                if (string.IsNullOrWhiteSpace(requestedItem.Unit))
-                    requestedItem.Unit = "pcs";
+            // 2️⃣ Save RequestedItem linked to the AidRequest
+            requestedItem.RequestId = aidRequest.RequestId; // FK link
 
-                db.RequestedItems.Add(requestedItem);
-                db.SaveChanges();
+            // (Optional defaults to avoid nulls if form doesn’t send data)
+            if (string.IsNullOrWhiteSpace(requestedItem.ItemName))
+                requestedItem.ItemName = aidRequest.RequestTitle;
+            if (requestedItem.Quantity <= 0)
+                requestedItem.Quantity = 1;
+            if (string.IsNullOrWhiteSpace(requestedItem.Unit))
+                requestedItem.Unit = "pcs";
+            requestedItem.ItemRequestCount = 1; // Default value
 
-                return RedirectToAction("Index");
-            }
+            db.RequestedItems.Add(requestedItem);
+            db.SaveChanges();
 
+            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
-            return View(aidRequest);
+
+            return RedirectToAction("Index");
         }
 
         // GET: AidRequests/Edit/5
@@ -91,11 +81,14 @@ namespace NGO_Project.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             AidRequest aidRequest = db.AidRequests.Find(id);
             if (aidRequest == null)
             {
                 return HttpNotFound();
             }
+
+            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName", aidRequest.CategoryId);
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
             return View(aidRequest);
         }
@@ -103,17 +96,22 @@ namespace NGO_Project.Controllers
         // POST: AidRequests/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "RequestId,UserId,RequestTitle,Description,Category,UrgencyLevel,Location,PostDate,IsActive")] AidRequest aidRequest)
+        public ActionResult Edit([Bind(Include = "RequestId,UserId,RequestTitle,Description,CategoryId,UrgencyLevel,Location,PostDate,IsActive")] AidRequest aidRequest)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(aidRequest).State = EntityState.Modified;
+                aidRequest.PostDate = DateTime.Now;
+                aidRequest.IsActive = true;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName", aidRequest.CategoryId);
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
             return View(aidRequest);
         }
+
 
         // GET: AidRequests/Delete/5
         public ActionResult Delete(int? id)

@@ -152,7 +152,7 @@
             <button id="showAddItemFormBtn" class="btn-primary" style="padding: 10px 22px; font-size: 1rem; font-weight: 600;">
                 <span style="font-size:1.1rem;"></span> Add Item
             </button>
-            <button id="openFeedModalBtn"  class="btn-primary"  style="background: #111827; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <button id="openFeedModalBtn" class="btn-primary" style="background: #111827; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                 Add New Category
             </button>
         </div>
@@ -192,9 +192,8 @@
                     @Html.ValidationMessageFor(m => m.NewItem.ItemName, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group">
-                    <label>Category</label>
-                    @Html.TextBoxFor(m => m.NewItem.Category, new { @class = "form-control", placeholder = "e.g., Food, Clothes", required = "required" })
-                    @Html.ValidationMessageFor(m => m.NewItem.Category, "", new { @class = "text-danger" })
+                    <label for="category">Category</label>
+                    @Html.DropDownListFor(m => m.NewItem.CategoryId, (SelectList)ViewBag.Categories, "Select category", new { @id = "categoryid", @class = "form-control" })
                 </div>
                 <div class="form-group">
                     <label>Quantity</label>
@@ -326,8 +325,8 @@
             bindAjaxForm("#createCategoryForm", function () {
                 $("#feedModalBg").hide();
 
-               
-              
+
+
             });
 
             // Modal cancel button

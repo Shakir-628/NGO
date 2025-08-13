@@ -65,20 +65,5 @@ namespace NGO_Project.Controllers
 
             return View(aidRequestsWithUsers);
         }
-
-        //public ActionResult Donor()
-        //{
-        //    if (Session["UserId"] == null)
-        //    {
-
-        //        return RedirectToAction("Login", "Users");
-
-
-        //        Response.Cache.SetCacheability(HttpCacheability.NoCache);
-        //        Response.Cache.SetExpires(DateTime.UtcNow.AddSeconds(-1));
-        //        Response.Cache.SetNoStore();
-        //    }
-        //    return View();
-        //}
     }
 }
