@@ -25,6 +25,13 @@
             background: #1f2937;
         }
 
+    /* Force Add Item button to always be visible */
+    #showAddItemFormBtn {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
     .summary-card {
         background: #fff;
         border-radius: 12px;
@@ -270,16 +277,30 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
-        $(function () {
+        $(document).ready(function () {
+            // Ensure Add Item button never hides
+            const addItemBtn = document.getElementById("showAddItemFormBtn");
+            const observer = new MutationObserver(() => {
+                addItemBtn.style.display = "inline-flex";
+                addItemBtn.style.visibility = "visible";
+                addItemBtn.style.opacity = "1";
+            });
+            observer.observe(addItemBtn, { attributes: true, attributeFilter: ["style", "class"] });
 
-            // Generic AJAX form handler
-            function bindAjaxForm(formSelector, onSuccess) {
-                $(formSelector).on("submit", function (e) {
-                    e.preventDefault();
+            // Show form
+            $("#showAddItemFormBtn").on("click", function () {
+                $("#addItemFormContainer").show();
+            });
 
-                    var form = $(this);
-                    var url = form.attr("action");
-                    var formData = form.serialize();
+            // Hide form
+            $("#cancelAddItemFormBtn").on("click", function () {
+                $("#addItemFormContainer").hide();
+                $("#addItemForm")[0].reset();
+            });
+
+            // AJAX form submission
+            $("#addItemForm").on("submit", function (e) {
+                e.preventDefault();
 
                     $.ajax({
                         type: "POST",
@@ -290,34 +311,32 @@
                                 swal("Success!", "Operation completed successfully.", "success");
                                 form[0].reset();
 
-                                if (typeof onSuccess === "function") {
-                                    onSuccess(response);
-                                }
-                            } else {
-                                swal("Error!", response.errors || "An error occurred.", "error");
-                            }
-                        },
-                        error: function () {
-                            swal("Error!", "A server error occurred.", "error");
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            $("#addItemFormContainer").hide();
+                            $("#addItemForm")[0].reset();
+                            swal("Success!", "Item added successfully.", "success");
+
+                            $.get("/InventoryItems/GetInventoryItems", function (data) {
+                                $("#inventoryTableBody").html(data);
+                            });
+
+                            $.get("/InventoryItems/GetSummaryData", function (data) {
+                                $("#totalItems").text(data.total);
+                                $("#availableItems").text(data.available);
+                                $("#lowStockItems").text(data.lowStock);
+                            });
+                        } else {
+                            swal("Error!", "An error occurred: " + response.errors, "error");
                         }
-                    });
-                });
-            }
-
-            // Bind Add Item form
-            bindAjaxForm("#addItemForm", function () {
-                $("#addItemFormContainer").hide();
-
-                // Refresh inventory table
-                $.get("/InventoryItems/GetInventoryItems", function (data) {
-                    $("#inventoryTableBody").html(data);
-                });
-
-                // Refresh summary data
-                $.get("/InventoryItems/GetSummaryData", function (data) {
-                    $("#totalItems").text(data.total);
-                    $("#availableItems").text(data.available);
-                    $("#lowStockItems").text(data.lowStock);
+                    },
+                    error: function () {
+                        swal("Error!", "An error occurred while adding the item.", "error");
+                    }
                 });
             });
 
@@ -336,5 +355,4 @@
 
         });
     </script>
-
 }

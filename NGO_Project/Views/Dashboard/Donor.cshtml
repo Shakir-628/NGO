@@ -96,23 +96,54 @@
                 font-size: 1.1rem;
             }
 
+        /* Cards container with even spacing */
         .cards {
             display: flex;
-            gap: 24px;
             flex-wrap: wrap;
+            gap: 32px; /* Increased from 24px for better spacing */
         }
 
+        /* Flip Animation Styles */
         .card {
-            background: #fff;
+            background: transparent;
             border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            padding: 24px 20px 20px 20px;
+            perspective: 1000px;
             flex: 1 1 320px;
             min-width: 320px;
             max-width: 370px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s ease;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            backface-visibility: hidden;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 24px 20px 20px 20px;
+            background: #fff;
+        }
+
+        .card-back {
+            background: #e0e7ff;
+            transform: rotateY(180deg);
             display: flex;
             flex-direction: column;
-            margin-bottom: 24px;
+            justify-content: center;
+            align-items: center;
+            color: #3730a3;
+            padding: 20px;
         }
 
         .priority {
@@ -203,21 +234,24 @@
             margin-bottom: 4px;
         }
 
-        .donate-btn {
+        .donate-btn, .donate-back-btn {
             background: #22c55e;
             color: #fff;
             border: none;
             border-radius: 8px;
-            padding: 14px 0;
+            padding: 14px 20px;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            margin-top: auto;
             transition: background 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+        }
+
+        .donate-back-btn {
+            background: #2563eb;
         }
     </style>
 </head>
@@ -232,8 +266,8 @@
             @Html.AntiForgeryToken()
             <button type="submit" class="logout-btn">Logout</button>
         </form>
-
     </div>
+
     <div class="container">
         <div class="title">Material Aid Requests</div>
         <div class="subtitle">Help NGOs by donating needed items directly</div>
@@ -241,33 +275,44 @@
             <input type="text" placeholder="Search items needed..." disabled>
             <button title="Filter" disabled><span>&#128269;</span></button>
         </div>
-        @*
-        Corrected code to handle a null model.
-        The check `Model != null` is added before calling .Any().
-        *@
+
         <div class="cards">
-            @if (Model.Count()<0  || !Model.Any())
+            @if (Model == null || !Model.Any())
             {
-                <div style="text-align: center; width: 100%; color: #6b7280; padding: 40px;">No active aid requests available at the moment. Please check back later!</div>
+                <div style="text-align: center; width: 100%; color: #6b7280; padding: 40px;">
+                    No active aid requests available at the moment. Please check back later!
+                </div>
             }
             else
             {
                 foreach (var item in Model)
                 {
+                    string priorityClass = "";
+                    if (item.AidRequest.UrgencyLevel != null)
+                    {
+                        priorityClass = item.AidRequest.UrgencyLevel.Replace(" ", "").ToLower();
+                    }
                     <div class="card">
-                        @{
-                            string priorityClass = "";
-                            if (item.AidRequest.UrgencyLevel != null)
-                            {
-                                priorityClass = item.AidRequest.UrgencyLevel.Replace(" ", "").ToLower();
-                            }
-                        }
-                        <span class="priority @priorityClass">@item.AidRequest.UrgencyLevel.ToUpper()</span>
-                        <span class="date">@item.AidRequest.PostDate.ToString("M/d/yyyy")</span>
-                        <h3>@item.AidRequest.RequestTitle</h3>
-                        <a class="org-link" href="#">@(item.User.FirstName + " " + item.User.LastName)</a>
-                        <div class="desc">
-                            @item.AidRequest.Description
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <span class="priority @priorityClass">@item.AidRequest.UrgencyLevel.ToUpper()</span>
+                                <span class="date">@item.AidRequest.PostDate.ToString("M/d/yyyy")</span>
+                                <h3>@item.AidRequest.RequestTitle</h3>
+                                <a class="org-link" href="#">@(item.User.FirstName + " " + item.User.LastName)</a>
+                                <div class="desc">@item.AidRequest.Description</div>
+                                <div class="location">&#128205; @item.AidRequest.Location</div>
+                                <div class="category">@item.AidRequest.Category</div>
+                                <div class="items-needed">Items Needed:</div>
+                                <div class="item-tags">
+                                    <span class="item-tag">Items not specified</span>
+                                </div>
+                                <button class="donate-btn">&#10084; Donate Items</button>
+                            </div>
+                            <div class="card-back">
+                                <h3>Thank you for your support!</h3>
+                                <p>We’ll guide you through the donation process shortly.</p>
+                                <button class="donate-back-btn">Back</button>
+                            </div>
                         </div>
                         <div class="location">&#128205; @item.AidRequest.Location</div>
                         <div class="category">@item.AidRequest.Category.CategoryName</div>
@@ -281,5 +326,21 @@
             }
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".donate-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    this.closest(".card").classList.add("flipped");
+                });
+            });
+
+            document.querySelectorAll(".donate-back-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    this.closest(".card").classList.remove("flipped");
+                });
+            });
+        });
+    </script>
 </body>
 </html>
