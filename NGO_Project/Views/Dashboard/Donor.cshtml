@@ -55,7 +55,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 24px 16px;
         }
@@ -96,21 +96,35 @@
                 font-size: 1.1rem;
             }
 
-        /* Cards container with even spacing */
+        /* Responsive cards container */
         .cards {
             display: flex;
             flex-wrap: wrap;
-            gap: 32px; /* Increased from 24px for better spacing */
+            gap: 24px;
+            justify-content: center;
         }
 
-        /* Flip Animation Styles */
         .card {
             background: transparent;
             border-radius: 14px;
             perspective: 1000px;
-            flex: 1 1 320px;
-            min-width: 320px;
-            max-width: 370px;
+            flex: 1 1 calc(33.333% - 24px); /* 3 cards per row with spacing */
+            max-width: 360px;
+            min-width: 280px;
+            min-height: 420px;
+            box-sizing: border-box;
+        }
+
+        @@media (max-width: 992px) {
+            .card {
+                flex: 1 1 calc(50% - 24px); /* 2 per row on tablets */
+            }
+        }
+
+        @@media (max-width: 600px) {
+            .card {
+                flex: 1 1 100%; /* Full width on mobile */
+            }
         }
 
         .card-inner {
@@ -119,6 +133,7 @@
             height: 100%;
             transition: transform 0.8s ease;
             transform-style: preserve-3d;
+            will-change: transform;
         }
 
         .card.flipped .card-inner {
@@ -133,18 +148,54 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             padding: 24px 20px 20px 20px;
             background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Adjusted to stack elements at the top */
+            height: 100%;
         }
 
         .card-back {
             background: #e0e7ff;
             transform: rotateY(180deg);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            padding: 30px;
+            text-align: left;
             color: #3730a3;
-            padding: 20px;
         }
+
+            .card-back h3 {
+                font-size: 1.5rem;
+                margin-top: 0;
+                margin-bottom: 8px;
+                color: #1e3a8a;
+            }
+
+            .card-back p {
+                font-size: 1rem;
+                line-height: 1.5;
+                margin-bottom: 20px;
+            }
+
+            .card-back hr {
+                width: 100%;
+                border: 0;
+                border-top: 1px solid #c7d2fe;
+                margin: 20px 0;
+            }
+
+            .card-back h4 {
+                font-size: 1.2rem;
+                color: #1e3a8a;
+                margin: 0 0 12px 0;
+            }
+
+            .card-back .contact-info {
+                margin-bottom: 20px;
+            }
+
+                .card-back .contact-info p {
+                    margin: 0 0 8px 0;
+                    font-size: 1rem;
+                }
 
         .priority {
             display: inline-block;
@@ -248,10 +299,16 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            width: 100%;
+        }
+
+        .donate-btn {
+            margin-top: auto;
         }
 
         .donate-back-btn {
             background: #2563eb;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -276,7 +333,7 @@
             <button title="Filter" disabled><span>&#128269;</span></button>
         </div>
 
-        <div class="cards">
+        <div class="cards" id="cards-container">
             @if (Model == null || !Model.Any())
             {
                 <div style="text-align: center; width: 100%; color: #6b7280; padding: 40px;">
@@ -301,7 +358,7 @@
                                 <a class="org-link" href="#">@(item.User.FirstName + " " + item.User.LastName)</a>
                                 <div class="desc">@item.AidRequest.Description</div>
                                 <div class="location">&#128205; @item.AidRequest.Location</div>
-                                <div class="category">@item.AidRequest.Category</div>
+                                <div class="category">@item.AidRequest.Category.CategoryName</div>
                                 <div class="items-needed">Items Needed:</div>
                                 <div class="item-tags">
                                     <span class="item-tag">Items not specified</span>
@@ -311,24 +368,80 @@
                             <div class="card-back">
                                 <h3>Thank you for your support!</h3>
                                 <p>We’ll guide you through the donation process shortly.</p>
+                                <hr>
+                                <h4>NGO Information</h4>
+                                <div class="contact-info">
+                                    <p><strong>Name:</strong> @item.User.FirstName</p>
+                                    <p><strong>Email:</strong> @item.User.Email</p>
+                                    <p><strong>Phone:</strong> @item.User.PhoneNumber</p>
+                                    <p><strong>Address:</strong> @item.User.Address</p>
+                                    <p><strong>City:</strong> @item.User.City</p>
+                                </div>
                                 <button class="donate-back-btn">Back</button>
                             </div>
                         </div>
-                        <div class="location">&#128205; @item.AidRequest.Location</div>
-                        <div class="category">@item.AidRequest.Category.CategoryName</div>
-                        <div class="items-needed">Items Needed:</div>
-                        <div class="item-tags">
-                            <span class="item-tag">Items not specified</span>
-                        </div>
-                        <button class="donate-btn">&#10084; Donate Items</button>
                     </div>
                 }
             }
         </div>
-    </div>
 
+        <div id="pagination" style="text-align:center; margin-top:4rem;"></div>
+
+    </div>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            const cardsPerPage = 6;
+            const cards = Array.from(document.querySelectorAll("#cards-container .card"));
+            const totalPages = Math.ceil(cards.length / cardsPerPage);
+            const pagination = document.getElementById("pagination");
+            let currentPage = 1;
+
+            function showPage(page) {
+                currentPage = page;
+                const start = (page - 1) * cardsPerPage;
+                const end = start + cardsPerPage;
+
+                cards.forEach((card, index) => {
+                    card.style.display = (index >= start && index < end) ? "block" : "none";
+                });
+
+                renderPagination();
+            }
+
+            function renderPagination() {
+                pagination.innerHTML = "";
+                if (totalPages <= 1) return;
+
+                const prev = document.createElement("button");
+                prev.textContent = "Prev";
+                prev.disabled = currentPage === 1;
+                prev.onclick = () => showPage(currentPage - 1);
+                pagination.appendChild(prev);
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const btn = document.createElement("button");
+                    btn.textContent = i;
+                    btn.disabled = i === currentPage;
+                    btn.onclick = () => showPage(i);
+                    pagination.appendChild(btn);
+                }
+
+                const next = document.createElement("button");
+                next.textContent = "Next";
+                next.disabled = currentPage === totalPages;
+                next.onclick = () => showPage(currentPage + 1);
+                pagination.appendChild(next);
+
+                pagination.querySelectorAll("button").forEach(btn => {
+                    btn.style.margin = "0 4px";
+                    btn.style.padding = "6px 12px";
+                    btn.style.border = "1px solid #ccc";
+                    btn.style.borderRadius = "4px";
+                    btn.style.cursor = "pointer";
+                    btn.style.background = "#fff";
+                });
+            }
+
             document.querySelectorAll(".donate-btn").forEach(btn => {
                 btn.addEventListener("click", function () {
                     this.closest(".card").classList.add("flipped");
@@ -340,6 +453,8 @@
                     this.closest(".card").classList.remove("flipped");
                 });
             });
+
+            showPage(1);
         });
     </script>
 </body>
