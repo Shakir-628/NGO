@@ -117,7 +117,7 @@
             @using (Html.BeginForm("Login", "Users", FormMethod.Post, new { id = "donorForm" }))
             {
                 @Html.AntiForgeryToken()
-
+           
                 <div class="form-group">
                     @Html.Label("User Type")
                     @Html.DropDownList("Type", (SelectList)ViewBag.UserTypelist, "-- Select User Type --", new { @class = "form-control" })
@@ -127,7 +127,7 @@
                 <div class="form-group">
                     @Html.LabelFor(m => m.Username)
                     @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "Enter your username" })
-                    @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                    @Html.ValidationMessage("Username", "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group">
@@ -140,7 +140,8 @@
                             </span>
                         </div>
                     </div>
-                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    @Html.ValidationMessage("Password", "", new { @class = "text-danger" })
+                    @Html.ValidationMessage("InvalidUser", "", new { @class = "text-danger" })
                 </div>
 
                 <button type="submit" class="login-button">Login</button>

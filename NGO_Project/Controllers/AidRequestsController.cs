@@ -49,7 +49,7 @@ namespace NGO_Project.Controllers
             aidRequest.PostDate = DateTime.Now;
             aidRequest.IsActive = true;
             aidRequest.UserId = Convert.ToInt16(Session["UserId"]);
-
+            aidRequest.IsPosted = 1;
             db.AidRequests.Add(aidRequest);
             db.SaveChanges(); // This will generate RequestId
 

@@ -36,10 +36,19 @@ namespace NGO_Project.Controllers
 
             if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
             {
-                ModelState.AddModelError("", "Username and Password are required.");
+                ModelState.AddModelError("Missinguser", "Username and Password are required.");
                 return View();
             }
-
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                ModelState.AddModelError("Username", "Username is required.");
+                return View();
+            }
+            if (string.IsNullOrWhiteSpace(user.Password))
+            {
+                ModelState.AddModelError("Password", "Password is required.");
+                return View();
+            }
             if (string.IsNullOrWhiteSpace(Type))
             {
                 ModelState.AddModelError("Type", "Please select a user type.");
@@ -63,7 +72,7 @@ namespace NGO_Project.Controllers
            
             if (existingUser == null)
             {
-                ModelState.AddModelError("", "Invalid username, password, or user type.");
+                ModelState.AddModelError("InvalidUser", "Invalid username, password, or user type.");
                 return View();
             }
 

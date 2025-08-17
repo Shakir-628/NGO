@@ -120,12 +120,24 @@ namespace NGO_Project.Controllers
             if (ModelState.IsValid)
             {
                 if (Session["UserId"] != null && !string.IsNullOrEmpty(Session["UserId"].ToString()))
-                {                  
-                    db.Categories.Add(viewModel);
-                    db.SaveChanges();
+                {
+                    var existingCategories = db.Categories.FirstOrDefault(x =>
+                x.CategoryName == viewModel.CategoryName 
+               );
+
+                    if (existingCategories == null)
+                    {
+                        db.Categories.Add(viewModel);
+                        db.SaveChanges();
+                    }
+                    else {
+                        ModelState.AddModelError("Duplicate", "Category already exists");
+                    }
+
+                  
 
                     ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
-                    return Json(new { success = true });
+                    return RedirectToAction("Index");
                 }
             }
 

@@ -253,15 +253,30 @@
         <div class="modal-content">
             <h2>Add New Category</h2>
 
-            @using (Html.BeginForm("CreateCategory", "InventoryItems", FormMethod.Post, new { id = "createCategoryForm" }))
+            @using (Html.BeginForm("CreateCategory", "InventoryItems", FormMethod.Post, new { id = "createCategoryForm"}))
             {
                 @Html.AntiForgeryToken()
-                <div class="modal-form-row">
-                    <div class="modal-form-group">
-                        <label for="CategoryName">Category</label>
-                        @Html.TextBox("CategoryName", null, new { @id = "CategoryName", @placeholder = "Enter Category..." })
-                    </div>
+        <div class="modal-form-row">
+            <div class="modal-form-group">
+                <label for="CategoryName">Category</label>
+                @Html.TextBox("CategoryName", null, new { @id = "CategoryName", @placeholder = "Enter Category..." })
+                @Html.ValidationMessage("Duplicate", "", new { @class = "text-danger" })
+            </div>
+            <div class="modal-form-row">
+                <div class="modal-form-group">
+                    <label for="Unit">Unit</label>
+                    @Html.DropDownList("Unit", new SelectList(new[]
+                    {
+                        new { Value = "ctn", Text = "Carton" },
+                        new { Value = "pcs", Text = "Pieces" },
+                        new { Value = "kg", Text = "KG" },
+                        new { Value = "ltr", Text = "Litre" },
+                        new { Value = "m", Text = "Meter" },
+                     
+                    }, "Value", "Text"), "-- Select Unit --", new { @class = "form-control", @id = "Unit" })
                 </div>
+            </div>
+        </div>
 
                 <div class="modal-form-actions">
                     <button type="submit" class="btn btn-success">Save</button>
@@ -347,7 +362,9 @@
 
 
             });
-
+                $("#createCategoryForm").on("submit", function (e) {
+                    e.preventDefault();
+                });
             // Modal cancel button
             $("#cancelFeedModalBtn").on("click", function () {
                 $("#feedModalBg").hide();
