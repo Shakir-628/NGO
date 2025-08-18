@@ -91,13 +91,13 @@
                     </div>
                     <div class="modal-form-group">
                         <label for="category">Category</label>
-                        @Html.DropDownList("CategoryId", (SelectList)ViewBag.Categories, "Select category", new { @id = "categoryid", @class = "form-control" })
+                        @Html.DropDownList("CategoryId", (SelectList)ViewBag.Categories, "Select category", new { @id = "categoryid", @class = "form-control searchable" })
                     </div>
                 </div>
                 <div class="modal-form-row">
                     <div class="modal-form-group">
                         <label for="urgency">Urgency Level</label>
-                        @Html.DropDownList("UrgencyLevel", new SelectList(new List<string> { "High Priority", "Medium Priority", "Low Priority" }), "Select urgency", new { @id = "urgency" })
+                        @Html.DropDownList("UrgencyLevel", new SelectList(new List<string> { "High Priority", "Medium Priority", "Low Priority" }), "Select urgency searchable", new { @id = "urgency" })
                     </div>
                     <div class="modal-form-group">
                         <label for="location">Request Location (Optional)</label>

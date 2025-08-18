@@ -11,10 +11,10 @@
     <title>Login - Helping Hands</title>
     <link rel="icon" type="image/png" href="~/assets/img/logo/HelpingHands.png" />
 
-    <!-- Fonts & Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <style>
         body {
@@ -99,6 +99,10 @@
         .text-danger {
             font-size: 0.85em;
         }
+
+        .d1 {
+            padding: 1px;
+        }
     </style>
 </head>
 <body>
@@ -112,15 +116,14 @@
             <p>Your platform for seamless aid management.</p>
         </div>
 
-        <!-- Login Form -->
         <div id="login-form" class="tab-content active">
             @using (Html.BeginForm("Login", "Users", FormMethod.Post, new { id = "donorForm" }))
             {
                 @Html.AntiForgeryToken()
-           
+
                 <div class="form-group">
                     @Html.Label("User Type")
-                    @Html.DropDownList("Type", (SelectList)ViewBag.UserTypelist, "-- Select User Type --", new { @class = "form-control" })
+                    @Html.DropDownList("Type", (SelectList)ViewBag.UserTypelist, "-- Select User Type --", new { @class = "form-control d1" })
                     @Html.ValidationMessage("Type", "", new { @class = "text-danger" })
                 </div>
 
@@ -166,6 +169,24 @@
                 passwordField.type = "password";
                 icon.classList.remove("fa-eye-slash");
                 icon.classList.add("fa-eye");
+            }
+        });
+
+        // Intercept form submission for validation
+        document.getElementById("donorForm").addEventListener("submit", function (event) {
+            const userType = document.getElementById("Type").value;
+            const username = document.getElementById("Username").value;
+            const password = document.getElementById("donorPassword").value;
+
+            // Check if any fields are empty or the dropdown is at its default value
+            if (!userType || !username || !password) {
+                event.preventDefault(); // Stop the form from submitting
+                swal({
+                    title: "Validation Error",
+                    text: "Please fill in all the required fields.",
+                    icon: "error",
+                    button: "OK",
+                });
             }
         });
     </script>

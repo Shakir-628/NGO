@@ -22,7 +22,12 @@ namespace NGO_Project.Controllers
                 NewItem = new InventoryItem(),
                 InventoryItems = db.InventoryItems.ToList()
             };
-            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
+            // pass units as distinct list from Category table
+            ViewBag.Units = new SelectList(db.Categories.Where(x => x.CategoryName != null)
+                                           .Select(c => c.Unit)
+                                           .Distinct()
+                                           .ToList());
+            ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName");
             return View(viewModel);
         }
 
@@ -41,8 +46,12 @@ namespace NGO_Project.Controllers
 
                     db.InventoryItems.Add(viewModel.NewItem);
                     db.SaveChanges();
-
-                    ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
+                    // pass units as distinct list from Category table
+                    ViewBag.Units = new SelectList(db.Categories.Where(x => x.CategoryName != null)
+                                                   .Select(c => c.Unit)
+                                                   .Distinct()
+                                                   .ToList());
+                    ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName");
                     return Json(new { success = true });
                 }
             }
@@ -115,33 +124,44 @@ namespace NGO_Project.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateCategory([Bind(Include = "CategoryName")]  Category viewModel)
+        public ActionResult CreateCategory([Bind(Include = "CategoryName, Unit")] Category viewModel)
         {
             if (ModelState.IsValid)
             {
                 if (Session["UserId"] != null && !string.IsNullOrEmpty(Session["UserId"].ToString()))
                 {
                     var existingCategories = db.Categories.FirstOrDefault(x =>
-                x.CategoryName == viewModel.CategoryName 
-               );
+                        x.CategoryName == viewModel.CategoryName);
 
                     if (existingCategories == null)
                     {
                         db.Categories.Add(viewModel);
                         db.SaveChanges();
+                        // pass units as distinct list from Category table
+                        ViewBag.Units = new SelectList(db.Categories.Where(x => x.CategoryName != null)
+                                                       .Select(c => c.Unit)
+                                                       .Distinct()
+                                                       .ToList());
+                        ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName");
+                        return Json(new { success = true, message = "Category created successfully!" });
                     }
-                    else {
-                        ModelState.AddModelError("Duplicate", "Category already exists");
+                    else
+                    {
+                        return Json(new { success = false, message = "Category already exists." });
                     }
-
-                  
-
-                    ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
-                    return RedirectToAction("Index");
                 }
             }
 
-            return Json(new { success = false, errors = "Invalid data submitted or user not logged in." });
+            return Json(new { success = false, message = "Invalid data submitted or user not logged in." });
+        }
+        public ActionResult GetUnitByCategory(int categoryId)
+        {
+            var unit = db.Categories
+                         .Where(c => c.CategoryId == categoryId)
+                         .Select(c => c.Unit)
+                         .FirstOrDefault();
+
+            return Json(new { unit = unit }, JsonRequestBehavior.AllowGet);
         }
         protected override void Dispose(bool disposing)
         {

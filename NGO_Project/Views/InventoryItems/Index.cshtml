@@ -195,22 +195,22 @@
             <div class="form-fields-grid">
                 <div class="form-group">
                     <label>Item Name</label>
-                    @Html.TextBoxFor(m => m.NewItem.ItemName, new { @class = "form-control", placeholder = "Enter item name", required = "required" })
+                    @Html.TextBoxFor(m => m.NewItem.ItemName, new { @class = "form-control alphabetsonly", placeholder = "Enter item name", required = "required" })
                     @Html.ValidationMessageFor(m => m.NewItem.ItemName, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group">
                     <label for="category">Category</label>
-                    @Html.DropDownListFor(m => m.NewItem.CategoryId, (SelectList)ViewBag.Categories, "Select category", new { @id = "categoryid", @class = "form-control" })
+                    @Html.DropDownListFor(m => m.NewItem.CategoryId, (SelectList)ViewBag.Categories, "Select category", new { @id = "categoryid", @class = "form-control searchable" })
                 </div>
                 <div class="form-group">
                     <label>Quantity</label>
-                    @Html.TextBoxFor(m => m.NewItem.Quantity, new { @class = "form-control", placeholder = "e.g., 50", type = "number", required = "required", min = "1" })
+                    @Html.TextBoxFor(m => m.NewItem.Quantity, new { @class = "form-control numbersOnly", placeholder = "e.g., 50", type = "number", required = "required", min = "1" })
                     @Html.ValidationMessageFor(m => m.NewItem.Quantity, "", new { @class = "text-danger" })
                 </div>
-                <div class="form-group">
-                    <label>Unit</label>
-                    @Html.TextBoxFor(m => m.NewItem.Unit, new { @class = "form-control", placeholder = "e.g., bags, boxes", required = "required" })
-                    @Html.ValidationMessageFor(m => m.NewItem.Unit, "", new { @class = "text-danger" })
+                <div class="modal-form-group">
+                    <label for="Unit">Unit</label>
+                    @Html.DropDownList("Unit", (SelectList)ViewBag.Units, "-- Select Unit --",
+                                       new { @class = "form-control", @id = "Unit" })
                 </div>
                 <div class="form-group">
                     <label>Expiry Date (if applicable)</label>
@@ -253,30 +253,29 @@
         <div class="modal-content">
             <h2>Add New Category</h2>
 
-            @using (Html.BeginForm("CreateCategory", "InventoryItems", FormMethod.Post, new { id = "createCategoryForm"}))
+            @using (Html.BeginForm("CreateCategory", "InventoryItems", FormMethod.Post, new { id = "createCategoryForm" }))
             {
                 @Html.AntiForgeryToken()
-        <div class="modal-form-row">
-            <div class="modal-form-group">
-                <label for="CategoryName">Category</label>
-                @Html.TextBox("CategoryName", null, new { @id = "CategoryName", @placeholder = "Enter Category..." })
-                @Html.ValidationMessage("Duplicate", "", new { @class = "text-danger" })
-            </div>
-            <div class="modal-form-row">
-                <div class="modal-form-group">
-                    <label for="Unit">Unit</label>
-                    @Html.DropDownList("Unit", new SelectList(new[]
-                    {
-                        new { Value = "ctn", Text = "Carton" },
-                        new { Value = "pcs", Text = "Pieces" },
-                        new { Value = "kg", Text = "KG" },
-                        new { Value = "ltr", Text = "Litre" },
-                        new { Value = "m", Text = "Meter" },
-                     
-                    }, "Value", "Text"), "-- Select Unit --", new { @class = "form-control", @id = "Unit" })
+                <div class="modal-form-row">
+                    <div class="modal-form-group">
+                        <label for="CategoryName">Category</label>
+                        @Html.TextBox("CategoryName", null, new { @id = "CategoryName", @placeholder = "Enter Category..." })
+                        <span class="text-danger" id="errorMessage"></span>
+                    </div>
+                    <div class="modal-form-row">
+                        <div class="modal-form-group">
+                            <label for="Unit">Unit</label>
+                            @Html.DropDownList("Unit", new SelectList(new[]
+                            {
+                                new { Value = "ctn", Text = "Carton" },
+                                new { Value = "pcs", Text = "Pieces" },
+                                new { Value = "kg", Text = "KG" },
+                                new { Value = "ltr", Text = "Litre" },
+                                new { Value = "m", Text = "Meter" },
+                            }, "Value", "Text"), "-- Select Unit --", new { @class = "form-control", @id = "Unit" })
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
                 <div class="modal-form-actions">
                     <button type="submit" class="btn btn-success">Save</button>
@@ -286,45 +285,31 @@
         </div>
     </div>
 
-</div>
 
+</div>
 @section scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
     <script>
         $(document).ready(function () {
-            // Ensure Add Item button never hides
-            const addItemBtn = document.getElementById("showAddItemFormBtn");
-            const observer = new MutationObserver(() => {
-                addItemBtn.style.display = "inline-flex";
-                addItemBtn.style.visibility = "visible";
-                addItemBtn.style.opacity = "1";
-            });
-            observer.observe(addItemBtn, { attributes: true, attributeFilter: ["style", "class"] });
 
-            // Show form
+            // --- Add Item Form ---
             $("#showAddItemFormBtn").on("click", function () {
                 $("#addItemFormContainer").show();
             });
 
-            // Hide form
             $("#cancelAddItemFormBtn").on("click", function () {
                 $("#addItemFormContainer").hide();
                 $("#addItemForm")[0].reset();
             });
 
-            // AJAX form submission
             $("#addItemForm").on("submit", function (e) {
                 e.preventDefault();
 
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        data: formData,
-                        success: function (response) {
-                            if (response.success) {
-                                swal("Success!", "Operation completed successfully.", "success");
-                                form[0].reset();
+                var form = $(this);
+                var url = form.attr("action");
+                var formData = form.serialize();
 
                 $.ajax({
                     type: "POST",
@@ -333,20 +318,24 @@
                     success: function (response) {
                         if (response.success) {
                             $("#addItemFormContainer").hide();
-                            $("#addItemForm")[0].reset();
+                            form[0].reset();
+
                             swal("Success!", "Item added successfully.", "success");
 
+                            // Refresh inventory table
                             $.get("/InventoryItems/GetInventoryItems", function (data) {
                                 $("#inventoryTableBody").html(data);
                             });
 
+                            // Refresh summary
                             $.get("/InventoryItems/GetSummaryData", function (data) {
                                 $("#totalItems").text(data.total);
                                 $("#availableItems").text(data.available);
                                 $("#lowStockItems").text(data.lowStock);
                             });
+
                         } else {
-                            swal("Error!", "An error occurred: " + response.errors, "error");
+                            swal("Error!", response.errors || "An error occurred.", "error");
                         }
                     },
                     error: function () {
@@ -355,21 +344,50 @@
                 });
             });
 
-            // Bind Create Category form
-            bindAjaxForm("#createCategoryForm", function () {
-                $("#feedModalBg").hide();
 
+            // --- Category Modal Form ---
+            $("#createCategoryForm").submit(function (e) {
+                e.preventDefault();
 
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            swal("Success!", response.message, "success");
 
-            });
-                $("#createCategoryForm").on("submit", function (e) {
-                    e.preventDefault();
+                            $("#CategoryName").val("");
+                            $("#Unit").val("");
+                            $("#feedModalBg").hide(); // close modal
+                        } else {
+                            $("#errorMessage").text(response.message);
+                        }
+                    },
+                    error: function () {
+                        $("#errorMessage").text("Something went wrong. Please try again.");
+                    }
                 });
-            // Modal cancel button
-            $("#cancelFeedModalBtn").on("click", function () {
+            });
+
+            // Close modal
+            $("#cancelFeedModalBtn").click(function () {
                 $("#feedModalBg").hide();
             });
 
+            // Open modal (make sure you have a button with id="openFeedModalBtn")
+            $("#openFeedModalBtn").click(function () {
+                $("#feedModalBg").show(); // or .fadeIn()
+            });
+
+        });
+        $("#CategoryId").change(function () {
+            var categoryId = $(this).val();
+            if (categoryId) {
+                $.get("/InventoryItems/GetUnitByCategory", { categoryId: categoryId }, function (data) {
+                    $("#Unit").val(data.unit);
+                });
+            }
         });
     </script>
 }
