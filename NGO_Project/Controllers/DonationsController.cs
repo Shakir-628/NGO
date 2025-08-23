@@ -17,7 +17,7 @@ namespace NGO_Project.Controllers
         // GET: Donations
         public ActionResult Index()
         {
-            var donations = db.Donations.Include(d => d.Donor);
+            var donations = db.Donations;
             return View(donations.ToList());
         }
 

@@ -46,13 +46,12 @@ namespace NGO_Project.Controllers
 
                     db.InventoryItems.Add(viewModel.NewItem);
                     db.SaveChanges();
-                    // pass units as distinct list from Category table
-                    ViewBag.Units = new SelectList(db.Categories.Where(x => x.CategoryName != null)
-                                                   .Select(c => c.Unit)
-                                                   .Distinct()
-                                                   .ToList());
-                    ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName");
-                    return Json(new { success = true });
+
+                    return Json(new
+                    {
+                        success = true,
+                        itemId = viewModel.NewItem.Id
+                    });
                 }
             }
 
@@ -163,6 +162,7 @@ namespace NGO_Project.Controllers
 
             return Json(new { unit = unit }, JsonRequestBehavior.AllowGet);
         }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

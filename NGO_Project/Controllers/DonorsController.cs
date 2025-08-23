@@ -15,22 +15,16 @@ namespace NGO_Project.Controllers
         private NGOEntities db = new NGOEntities();
 
         // GET: Donors/Home
-        public ActionResult Home()
+        public ActionResult Index()
         {
-            // Join AidRequests with Users on the UserId column to get the user (NGO) details.
-            var aidRequestsWithUsers = (from ar in db.AidRequests
-                                        join u in db.Users on ar.UserId equals u.UserId
-                                        where ar.IsActive == true
-                                        orderby ar.PostDate descending
-                                        select new
-                                        {
-                                            AidRequest = ar,
-                                            User = u
-                                        }).ToList();
+            int currentNGOId = Convert.ToInt32(Session["Userid"]);
 
-            // Pass the list of anonymous objects to the view.
-            // The view will now access data through this new structure (e.g., item.AidRequest.RequestTitle).
-            return View(aidRequestsWithUsers);
+            var donorDetails = db.Donors
+                .Where(d => d.NGOId == currentNGOId)
+                .OrderByDescending(d => d.CreatedDate)
+                .ToList();
+
+            return View(donorDetails);
         }
 
         // GET: Donors/Details/5
@@ -61,13 +55,28 @@ namespace NGO_Project.Controllers
         {
             if (ModelState.IsValid)
             {
-                donor.RegistrationDate = DateTime.Now;
+                donor.CreatedDate = DateTime.Now;
                 db.Donors.Add(donor);
                 db.SaveChanges();
                 return RedirectToAction("Home");
             }
 
             return View(donor);
+        }
+
+        [HttpPost]
+        public JsonResult SaveDonor(Donor model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Save donor into CRM (DB)
+                model.CreatedDate = DateTime.Now;
+                db.Donors.Add(model);
+                db.SaveChanges();
+
+                return Json(new { success = true });
+            }
+            return Json(new { success = false, message = "Invalid data." });
         }
 
         // GET: Donors/Edit/5

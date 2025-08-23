@@ -1,4 +1,4 @@
-@model NGO_Project.InventoryDashboardViewModel
+﻿@model NGO_Project.InventoryDashboardViewModel
 
 @{
     Layout = "~/Views/Shared/_LayoutNGO.cshtml";
@@ -151,6 +151,43 @@
     .status.out-of-stock {
         color: red;
     }
+    /* Modal Background */
+    .modal-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none; /* hidden by default */
+        justify-content: center;
+        align-items: center;
+        z-index: 1050;
+    }
+
+    /* Modal Content */
+    .modal-content {
+        background: #fff;
+        padding: 24px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        animation: fadeInScale 0.3s ease-in-out;
+    }
+
+    /* Smooth open animation */
+    @@keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
 </style>
 
 <div class="tab-content">
@@ -285,8 +322,41 @@
         </div>
     </div>
 
+    <div class="modal-bg" id="donorModalBg" style="display:none;">
+        <div class="modal-content">
+            <h2>Donor Information</h2>
+            <form id="donorForm">
+                <input type="hidden" id="DonorId" name="DonorId" value="0" />
+                <input type="hidden" id="NGOId" name="NGOId" value="@Session["UserId"]" /> <!-- get from logged in NGO -->
 
+                <div class="form-group">
+                    <label for="FullName">Full Name</label>
+                    <input type="text" id="FullName" name="FullName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="Email">Email</label>
+                    <input type="email" id="Email" name="Email" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="PhoneNumber">Phone Number</label>
+                    <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="DonatedItem">Donated Item</label>
+                    <input type="text" id="DonatedItem" name="DonatedItem" class="form-control" readonly />
+                </div>
+
+                <div class="modal-form-actions">
+                    <button type="submit" class="btn btn-success">Save & Print Invoice</button>
+                    <button type="button" class="btn btn-cancel" id="cancelDonorModalBtn">Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </div>
+
+
 @section scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
@@ -304,30 +374,56 @@
                 $("#addItemForm")[0].reset();
             });
 
-            $("#addItemForm").on("submit", function (e) {
+            $("#addItemForm").submit(function (e) {
                 e.preventDefault();
 
                 var form = $(this);
-                var url = form.attr("action");
-                var formData = form.serialize();
 
                 $.ajax({
+                    url: form.attr("action"),
                     type: "POST",
-                    url: url,
-                    data: formData,
+                    data: form.serialize(),
                     success: function (response) {
                         if (response.success) {
                             $("#addItemFormContainer").hide();
                             form[0].reset();
 
-                            swal("Success!", "Item added successfully.", "success");
+                            // ✅ Show options: Print Invoice OR Anonymous Donation
+                            swal({
+                                title: "Item Added Successfully!",
+                                text: "Do you want to print invoice or mark as anonymous donation?",
+                                icon: "success",
+                                buttons: {
+                                    cancel: {
+                                        text: "Anonymous Donation",
+                                        value: "anonymous",
+                                        visible: true,
+                                        className: "btn-cancel",
+                                        closeModal: true,
+                                    },
+                                    confirm: {
+                                        text: "Print Invoice",
+                                        value: "invoice",
+                                        visible: true,
+                                        className: "btn-success",
+                                        closeModal: true
+                                    }
+                                }
+                            }).then((value) => {
+                                if (value === "invoice") {
+                                    // ✅ Open donor form modal
+                                    $("#DonatedItemId").val(response.itemId);
+                                    $("#DonatedCategory").val(response.categoryName); // assuming backend sends category
+                                    $("#donorModalBg").show();
+                                }
+                            });
 
                             // Refresh inventory table
                             $.get("/InventoryItems/GetInventoryItems", function (data) {
                                 $("#inventoryTableBody").html(data);
                             });
 
-                            // Refresh summary
+                            // Refresh summary cards
                             $.get("/InventoryItems/GetSummaryData", function (data) {
                                 $("#totalItems").text(data.total);
                                 $("#availableItems").text(data.available);
@@ -339,11 +435,10 @@
                         }
                     },
                     error: function () {
-                        swal("Error!", "An error occurred while adding the item.", "error");
+                        swal("Error!", "Something went wrong.", "error");
                     }
                 });
             });
-
 
             // --- Category Modal Form ---
             $("#createCategoryForm").submit(function (e) {
@@ -389,5 +484,30 @@
                 });
             }
         });
+
+        // --- Donor Form ---
+        $("#donorForm").submit(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "/Donors/SaveDonor",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        $("#donorModalBg").hide();
+                        window.location.href = "/CashDonations/Index";
+                    } else {
+                        swal("Error!", res.message || "Unable to save donor info.", "error");
+                    }
+                },
+                error: function () {
+                    swal("Error!", "Something went wrong.", "error");
+                }
+            });
+        });
+
     </script>
+
+
 }

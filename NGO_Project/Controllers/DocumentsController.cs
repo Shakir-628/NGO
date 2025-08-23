@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Linq;
 using NGO_Project;
 
 namespace NGO_Project.Controllers
@@ -19,6 +20,18 @@ namespace NGO_Project.Controllers
         {
             //var documents = db.Documents;
             return View();
+        }
+
+        public ActionResult GenerateInvoice(int id)
+        {
+            var item = db.InventoryItems
+                         .Include("Category")
+                         .FirstOrDefault(i => i.Id == id);
+
+            if (item == null) return HttpNotFound();
+
+            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", id);
+            return View(); // Pass item to invoice view
         }
 
         // GET: Documents/Details/5

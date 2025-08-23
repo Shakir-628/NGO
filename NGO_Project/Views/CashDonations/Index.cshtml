@@ -1,5 +1,5 @@
 ﻿
-@model NGO_Project.CashDonation
+@model List<NGO_Project.Donor>
 
 @{
     Layout = "~/Views/Shared/_LayoutNGO.cshtml";
@@ -42,41 +42,29 @@
                     <tr style="color:#6b7280; text-align:left; border-bottom:1.5px solid #e5e7eb;">
                         <th style="padding:10px 8px; font-weight:600;">Name</th>
                         <th style="padding:10px 8px; font-weight:600;">Contact</th>
-                        <th style="padding:10px 8px; font-weight:600;">Type</th>
+                        @*<th style="padding:10px 8px; font-weight:600;">Type</th>
                         <th style="padding:10px 8px; font-weight:600;">Total Donations</th>
-                        <th style="padding:10px 8px; font-weight:600;">Last Donation</th>
+                        <th style="padding:10px 8px; font-weight:600;">Last Donation</th>*@
                         <th style="padding:10px 8px; font-weight:600;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr style="border-bottom:1px solid #f3f4f6;">
-                        <td style="padding:10px 8px; font-weight:600; color:#111827;">Ahmed Ali Khan</td>
-                        <td style="padding:10px 8px;">
-                            <span style='color:#6b7280;'>&#9993;</span> ahmed.ali@email.com<br>
-                            <span style='color:#6b7280;'>&#128222;</span> +92-300-1234567
-                        </td>
-                        <td style="padding:10px 8px;"><span style="background:#dcfce7; color:#16a34a; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">Individual</span></td>
-                        <td style="padding:10px 8px;">PKR 45,000</td>
-                        <td style="padding:10px 8px;">2024-01-15</td>
-                        <td style="padding:10px 8px;">
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 16px; font-size:1rem; font-weight:500; color:#111827; margin-right:6px; cursor:pointer;">View</button>
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 16px; font-size:1rem; font-weight:500; color:#111827; cursor:pointer;">Contact</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:10px 8px; font-weight:600; color:#111827;">Fatima Foundation</td>
-                        <td style="padding:10px 8px;">
-                            <span style='color:#6b7280;'>&#9993;</span> contact@fatimafoundation.org<br>
-                            <span style='color:#6b7280;'>&#128222;</span> +92-21-1234567
-                        </td>
-                        <td style="padding:10px 8px;"><span style="background:#e0e7ff; color:#3730a3; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">Organization</span></td>
-                        <td style="padding:10px 8px;">PKR 250,000</td>
-                        <td style="padding:10px 8px;">2024-01-12</td>
-                        <td style="padding:10px 8px;">
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 16px; font-size:1rem; font-weight:500; color:#111827; margin-right:6px; cursor:pointer;">View</button>
-                            <button style="background:#fff; border:1.5px solid #e5e7eb; border-radius:6px; padding:6px 16px; font-size:1rem; font-weight:500; color:#111827; cursor:pointer;">Contact</button>
-                        </td>
-                    </tr>
+                <tbody>
+                    @foreach (var donor in Model)
+                    {
+                        <tr style="border-bottom:1px solid #f3f4f6;">
+                            <td style="padding:10px 8px; font-weight:600; color:#111827;">@donor.FullName</td>
+                            <td style="padding:10px 8px;">
+                                <span style='color:#6b7280;'>&#9993;</span> @donor.Email<br>
+                                <span style='color:#6b7280;'>&#128222;</span> @donor.PhoneNumber
+                            </td>
+                            <td style="padding:10px 8px;">
+                                <span style="background:#dcfce7; color:#16a34a; border-radius:8px; padding:4px 12px; font-size:0.98rem; font-weight:500;">Individual</span>
+                            </td>
+                            @*<td style="padding:10px 8px;">@donor.DonatedItem</td>*@
+                            <td style="padding:10px 8px;">@donor.CreatedDate?.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
