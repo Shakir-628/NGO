@@ -23,7 +23,7 @@ namespace NGO_Project.Controllers
     .OrderByDescending(r => r.RequestId) // or r.CreatedDate
     .ToList();
 
-            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
+            ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName");
             return View(aidRequests);
         }
 
@@ -32,7 +32,7 @@ namespace NGO_Project.Controllers
         {
             // Assuming your User entity has FirstName
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName");
-            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
+            ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName");
             return View();
         }
 
@@ -68,7 +68,7 @@ namespace NGO_Project.Controllers
             db.RequestedItems.Add(requestedItem);
             db.SaveChanges();
 
-            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName");
+            ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName");
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
 
             return RedirectToAction("Index");
@@ -88,7 +88,7 @@ namespace NGO_Project.Controllers
                 return HttpNotFound();
             }
 
-            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName", aidRequest.CategoryId);
+            ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName", aidRequest.CategoryId);
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
             return View(aidRequest);
         }
@@ -107,7 +107,7 @@ namespace NGO_Project.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Categories = new SelectList(db.Categories, "CategoryId", "CategoryName", aidRequest.CategoryId);
+            ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName", aidRequest.CategoryId);
             ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", aidRequest.UserId);
             return View(aidRequest);
         }

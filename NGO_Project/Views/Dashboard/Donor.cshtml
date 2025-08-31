@@ -102,6 +102,7 @@
             flex-wrap: wrap;
             gap: 24px;
             justify-content: center;
+            gap: 60px;
         }
 
         .card {
@@ -113,6 +114,7 @@
             min-width: 280px;
             min-height: 420px;
             box-sizing: border-box;
+            margin-bottom: 24px;
         }
 
         @@media (max-width: 992px) {
@@ -128,38 +130,54 @@
         }
 
         .card-inner {
-            position: relative;
+            position: relative; /* This is essential for positioning the front and back */
             width: 100%;
             height: 100%;
             transition: transform 0.8s ease;
             transform-style: preserve-3d;
-            will-change: transform;
         }
 
         .card.flipped .card-inner {
             transform: rotateY(180deg);
         }
 
-        .card-front, .card-back {
-            position: absolute;
+        .card.flipped .card-front {
+            transform: rotateY(-180deg);
+        }
+
+        .card-front {
+            /* Keep this in the document flow to hold the card's space */
             width: 100%;
-            backface-visibility: hidden;
+            height: 100%;
+            backface-visibility: hidden; /* This hides the back of the front card during the flip */
             border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             padding: 24px 20px 20px 20px;
             background: #fff;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Adjusted to stack elements at the top */
-            height: 100%;
+            justify-content: flex-start;
+            transition: transform 0.8s ease, opacity 0.8s ease;
         }
 
         .card-back {
+            /* Position the back card absolutely, layering it on top of the front */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
             background: #e0e7ff;
-            transform: rotateY(180deg);
+            transform: rotateY(180deg); /* Start the back card rotated */
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             padding: 30px;
             text-align: left;
             color: #3730a3;
+            display: flex; /* You can keep your existing layout styles */
+            flex-direction: column;
+            justify-content: flex-start;
         }
 
             .card-back h3 {
@@ -308,7 +326,7 @@
 
         .donate-back-btn {
             background: #2563eb;
-            margin-top: 20px;
+            margin-top: auto;
         }
     </style>
 </head>
@@ -392,7 +410,6 @@
         document.addEventListener("DOMContentLoaded", function () {
             const cardsPerPage = 6;
             const cards = Array.from(document.querySelectorAll("#cards-container .card"));
-            const totalPages = Math.ceil(cards.length / cardsPerPage);
             const pagination = document.getElementById("pagination");
             let currentPage = 1;
 
@@ -402,13 +419,14 @@
                 const end = start + cardsPerPage;
 
                 cards.forEach((card, index) => {
-                    card.style.display = (index >= start && index < end) ? "block" : "none";
+                    card.style.display = (index >= start && index < end) ? "" : "none";
                 });
 
                 renderPagination();
             }
 
             function renderPagination() {
+                const totalPages = Math.ceil(cards.length / cardsPerPage);
                 pagination.innerHTML = "";
                 if (totalPages <= 1) return;
 
@@ -442,6 +460,37 @@
                 });
             }
 
+            function filterCards() {
+                const searchInput = document.querySelector('.search-bar input');
+                const filter = searchInput.value.toLowerCase();
+
+                // Hide all cards first
+                cards.forEach(card => card.style.display = "none");
+
+                // Filter and show matching cards
+                const matchingCards = cards.filter(card => {
+                    const cardFront = card.querySelector(".card-front");
+                    const textContent = cardFront.textContent.toLowerCase();
+                    return textContent.includes(filter);
+                });
+
+                // Display the matching cards
+                matchingCards.forEach(card => card.style.display = "");
+
+                // Correctly handle pagination based on whether search input is empty
+                if (filter.length > 0) {
+                    pagination.style.display = "none";
+                } else {
+                    pagination.style.display = "block";
+                    // Important: Reset to the first page when search is cleared
+                    showPage(1);
+                }
+            }
+
+            document.querySelector('.search-bar input').addEventListener('input', filterCards);
+            document.querySelector('.search-bar input').disabled = false;
+            document.querySelector('.search-bar button').disabled = false;
+
             document.querySelectorAll(".donate-btn").forEach(btn => {
                 btn.addEventListener("click", function () {
                     this.closest(".card").classList.add("flipped");
@@ -454,6 +503,7 @@
                 });
             });
 
+            // Initial page load
             showPage(1);
         });
     </script>

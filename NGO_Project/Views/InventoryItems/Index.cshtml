@@ -3,6 +3,12 @@
 @{
     Layout = "~/Views/Shared/_LayoutNGO.cshtml";
 }
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<!-- jQuery (already included, keep your version 3.6.0) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables JS (must come AFTER jQuery) -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 <style>
     /* ... Your CSS styles go here ... */
@@ -188,6 +194,77 @@
             transform: scale(1);
         }
     }
+
+    /* Pagination */
+    .pagination-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+    }
+
+    /* Pager buttons */
+    .pager {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .page-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        padding: 0 12px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 999px; /* pill */
+        background: #fff;
+        color: #111827;
+        text-decoration: none;
+        font-weight: 600;
+        line-height: 1;
+        transition: background .15s, color .15s, border-color .15s;
+    }
+
+        .page-link:hover {
+            background: #111827;
+            color: #fff;
+            border-color: #111827;
+        }
+
+        .page-link.active {
+            background: #111827;
+            color: #fff;
+            border-color: #111827;
+            pointer-events: none;
+        }
+
+        .page-link.disabled {
+            opacity: .45;
+            pointer-events: none;
+        }
+
+    /* Page-size block */
+    .page-size {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: .95rem;
+        color: #374151;
+    }
+
+        .page-size select {
+            height: 36px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0 10px;
+            background: #fff;
+            font-weight: 600;
+        }
 </style>
 
 <div class="tab-content">
@@ -200,8 +277,6 @@
                 Add New Category
             </button>
         </div>
-
-
     </div>
 
     <div style="font-size: 2rem; font-weight: 700; margin-bottom: 18px; color: #111827;">Inventory Management</div>
@@ -225,10 +300,8 @@
         <div style="font-size: 1.25rem; font-weight: 700;">Add New Inventory Item</div>
         <div style="color: #6b7280; font-size: 1.05rem; margin-bottom: 18px;">Record new donations received</div>
 
-        @using (Html.BeginForm("Create", "InventoryItems", FormMethod.Post, new { id = "addItemForm" }))
-        {
+        <form id="addItemForm">
             @Html.AntiForgeryToken()
-
             <div class="form-fields-grid">
                 <div class="form-group">
                     <label>Item Name</label>
@@ -236,18 +309,21 @@
                     @Html.ValidationMessageFor(m => m.NewItem.ItemName, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group">
-                    <label for="category">Category</label>
-                    @Html.DropDownListFor(m => m.NewItem.CategoryId, (SelectList)ViewBag.Categories, "Select category", new { @id = "categoryid", @class = "form-control searchable" })
+                    <label for="categoryid">Category</label>
+                    @Html.DropDownListFor(m => m.NewItem.CategoryId, (SelectList)ViewBag.Categories,
+                                           "-- Select Category --",
+                                           new { @id = "categoryid", @class = "form-control searchable" })
+                    @Html.ValidationMessageFor(m => m.NewItem.CategoryId, "", new { @class = "text-danger" })
                 </div>
+                <div class="form-group">
+                    <label for="Unit">Unit</label>
+                    @Html.TextBoxFor(m => m.NewItem.Unit, new { @class = "form-control", @id = "Unit", @readonly = "readonly" })
+                </div>
+
                 <div class="form-group">
                     <label>Quantity</label>
                     @Html.TextBoxFor(m => m.NewItem.Quantity, new { @class = "form-control numbersOnly", placeholder = "e.g., 50", type = "number", required = "required", min = "1" })
                     @Html.ValidationMessageFor(m => m.NewItem.Quantity, "", new { @class = "text-danger" })
-                </div>
-                <div class="modal-form-group">
-                    <label for="Unit">Unit</label>
-                    @Html.DropDownList("Unit", (SelectList)ViewBag.Units, "-- Select Unit --",
-                                       new { @class = "form-control", @id = "Unit" })
                 </div>
                 <div class="form-group">
                     <label>Expiry Date (if applicable)</label>
@@ -260,7 +336,7 @@
                 <button type="submit" class="btn btn-success">Add Item</button>
                 <button type="button" id="cancelAddItemFormBtn" class="btn btn-cancel">Cancel</button>
             </div>
-        }
+        </form>
     </div>
 
     <div style="background: #fff; border-radius: 10px; border: 1.5px solid #e5e7eb; padding: 24px;">
@@ -283,8 +359,10 @@
                     @Html.Partial("_InventoryTableRows", Model.InventoryItems)
                 </tbody>
             </table>
+
         </div>
     </div>
+
 
     <div class="modal-bg" id="feedModalBg">
         <div class="modal-content">
@@ -296,21 +374,19 @@
                 <div class="modal-form-row">
                     <div class="modal-form-group">
                         <label for="CategoryName">Category</label>
-                        @Html.TextBox("CategoryName", null, new { @id = "CategoryName", @placeholder = "Enter Category..." })
+                        @Html.TextBox("CategoryName", null, new { @class = "form-control alphabetsonly", @id = "CategoryName", @placeholder = "Enter Category..." })
                         <span class="text-danger" id="errorMessage"></span>
                     </div>
-                    <div class="modal-form-row">
-                        <div class="modal-form-group">
-                            <label for="Unit">Unit</label>
-                            @Html.DropDownList("Unit", new SelectList(new[]
-                            {
-                                new { Value = "ctn", Text = "Carton" },
-                                new { Value = "pcs", Text = "Pieces" },
-                                new { Value = "kg", Text = "KG" },
-                                new { Value = "ltr", Text = "Litre" },
-                                new { Value = "m", Text = "Meter" },
-                            }, "Value", "Text"), "-- Select Unit --", new { @class = "form-control", @id = "Unit" })
-                        </div>
+                    <div class="modal-form-group">
+                        <label for="Unit">Unit</label>
+                        @Html.DropDownList("Unit", new SelectList(new[]
+                        {
+                            new { Value = "ctn", Text = "Carton" },
+                            new { Value = "pcs", Text = "Pieces" },
+                            new { Value = "kg", Text = "KG" },
+                            new { Value = "ltr", Text = "Litre" },
+                            new { Value = "m", Text = "Meter" },
+                        }, "Value", "Text"), "-- Select Unit --", new { @class = "form-control searchable", @id = "Unit" })
                     </div>
                 </div>
 
@@ -321,13 +397,15 @@
             }
         </div>
     </div>
-
     <div class="modal-bg" id="donorModalBg" style="display:none;">
         <div class="modal-content">
             <h2>Donor Information</h2>
             <form id="donorForm">
                 <input type="hidden" id="DonorId" name="DonorId" value="0" />
-                <input type="hidden" id="NGOId" name="NGOId" value="@Session["UserId"]" /> <!-- get from logged in NGO -->
+                <input type="hidden" id="NGOId" name="NGOId" value="@Session["UserId"]" />
+                <!-- ✅ Added -->
+                <input type="hidden" id="DonatedItemId" name="DonatedItemId" />
+                <input type="hidden" id="DonatedCategory" name="DonatedCategory" />
 
                 <div class="form-group">
                     <label for="FullName">Full Name</label>
@@ -351,20 +429,27 @@
                     <button type="button" class="btn btn-cancel" id="cancelDonorModalBtn">Cancel</button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
 
-
 @section scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script>
-        $(document).ready(function () {
+        var inventoryTable;
 
-            // --- Add Item Form ---
+        $(document).ready(function () {
+            // ✅ Initialize DataTable once
+            inventoryTable = $(".inventory-table").DataTable({
+                pageLength: 5,
+                lengthMenu: [5, 10, 20, 50],
+                searching: true,
+                ordering: true,
+                responsive: true
+            });
+
+            // --- Add Item Form toggle ---
             $("#showAddItemFormBtn").on("click", function () {
                 $("#addItemFormContainer").show();
             });
@@ -374,13 +459,14 @@
                 $("#addItemForm")[0].reset();
             });
 
+            // --- Add Item Submit ---
             $("#addItemForm").submit(function (e) {
                 e.preventDefault();
 
                 var form = $(this);
 
                 $.ajax({
-                    url: form.attr("action"),
+                    url: "/InventoryItems/Create",
                     type: "POST",
                     data: form.serialize(),
                     success: function (response) {
@@ -388,42 +474,61 @@
                             $("#addItemFormContainer").hide();
                             form[0].reset();
 
-                            // ✅ Show options: Print Invoice OR Anonymous Donation
-                            swal({
-                                title: "Item Added Successfully!",
-                                text: "Do you want to print invoice or mark as anonymous donation?",
-                                icon: "success",
-                                buttons: {
-                                    cancel: {
-                                        text: "Anonymous Donation",
-                                        value: "anonymous",
-                                        visible: true,
-                                        className: "btn-cancel",
-                                        closeModal: true,
-                                    },
-                                    confirm: {
-                                        text: "Print Invoice",
-                                        value: "invoice",
-                                        visible: true,
-                                        className: "btn-success",
-                                        closeModal: true
+                            // Step 1: Success message
+                            swal("Item Added Successfully!", "", "success").then(() => {
+                                // Step 2: Ask for next action
+                                swal({
+                                    title: "Next Step",
+                                    text: "Would you like to print invoice or mark as anonymous donation?",
+                                    icon: "info",
+                                    buttons: {
+                                        cancel: {
+                                            text: "Cancel",
+                                            value: "cancel",
+                                            visible: false // hide cancel to force a choice
+                                        },
+                                        anonymous: {
+                                            text: "Anonymous Donation",
+                                            value: "anonymous",
+                                            className: "btn-warning"
+                                        },
+                                        invoice: {
+                                            text: "Print Invoice",
+                                            value: "invoice",
+                                            className: "btn-success"
+                                        }
                                     }
-                                }
-                            }).then((value) => {
-                                if (value === "invoice") {
-                                    // ✅ Open donor form modal
-                                    $("#DonatedItemId").val(response.itemId);
-                                    $("#DonatedCategory").val(response.categoryName); // assuming backend sends category
-                                    $("#donorModalBg").show();
-                                }
+                                }).then((value) => {
+                                    if (value === "invoice") {
+                                        // ✅ Also open donor modal
+                                        $("#DonatedItemId").val(response.itemId);
+                                        $("#DonatedCategory").val(response.categoryName);
+                                        $("#DonatedItem").val(response.categoryName);
+                                        $("#donorModalBg").show();
+                                    } else if (value === "anonymous") {
+                                        // ✅ Just close the popup (nothing else)
+                                        swal("Marked as Anonymous Donation", "", "info");
+                                    }
+                                });
                             });
 
                             // Refresh inventory table
                             $.get("/InventoryItems/GetInventoryItems", function (data) {
                                 $("#inventoryTableBody").html(data);
+
+                                if ($.fn.DataTable.isDataTable(".inventory-table")) {
+                                    inventoryTable.destroy();
+                                }
+                                inventoryTable = $(".inventory-table").DataTable({
+                                    pageLength: 5,
+                                    lengthMenu: [5, 10, 20, 50],
+                                    searching: true,
+                                    ordering: true,
+                                    responsive: true
+                                });
                             });
 
-                            // Refresh summary cards
+                            // Refresh summary
                             $.get("/InventoryItems/GetSummaryData", function (data) {
                                 $("#totalItems").text(data.total);
                                 $("#availableItems").text(data.available);
@@ -451,10 +556,9 @@
                     success: function (response) {
                         if (response.success) {
                             swal("Success!", response.message, "success");
-
                             $("#CategoryName").val("");
                             $("#Unit").val("");
-                            $("#feedModalBg").hide(); // close modal
+                            $("#feedModalBg").hide();
                         } else {
                             $("#errorMessage").text(response.message);
                         }
@@ -465,49 +569,59 @@
                 });
             });
 
-            // Close modal
             $("#cancelFeedModalBtn").click(function () {
                 $("#feedModalBg").hide();
             });
-
-            // Open modal (make sure you have a button with id="openFeedModalBtn")
             $("#openFeedModalBtn").click(function () {
-                $("#feedModalBg").show(); // or .fadeIn()
+                $("#feedModalBg").show();
             });
 
-        });
-        $("#CategoryId").change(function () {
-            var categoryId = $(this).val();
-            if (categoryId) {
-                $.get("/InventoryItems/GetUnitByCategory", { categoryId: categoryId }, function (data) {
-                    $("#Unit").val(data.unit);
-                });
-            }
-        });
+            // --- Donor Form ---
+            $("#donorForm").submit(function (e) {
+                e.preventDefault();
 
-        // --- Donor Form ---
-        $("#donorForm").submit(function (e) {
-            e.preventDefault();
-
-            $.ajax({
-                url: "/Donors/SaveDonor",
-                type: "POST",
-                data: $(this).serialize(),
-                success: function (res) {
-                    if (res.success) {
-                        $("#donorModalBg").hide();
-                        window.location.href = "/CashDonations/Index";
-                    } else {
-                        swal("Error!", res.message || "Unable to save donor info.", "error");
+                $.ajax({
+                    url: "/Donors/SaveDonor",
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        if (res.success) {
+                            $("#donorModalBg").hide();
+                            window.location.href = "/Donors/Index";
+                        } else {
+                            swal("Error!", res.message || "Unable to save donor info.", "error");
+                        }
+                    },
+                    error: function () {
+                        swal("Error!", "Something went wrong.", "error");
                     }
-                },
-                error: function () {
-                    swal("Error!", "Something went wrong.", "error");
+                });
+            });
+
+            // --- Auto-fill Unit from Category ---
+            $("#categoryid").change(function () {
+                var categoryId = $(this).val();
+                if (categoryId) {
+                    $.ajax({
+                        url: '@Url.Action("GetUnitByCategory", "InventoryItems")',
+                        type: "GET",
+                        data: { categoryId: categoryId },
+                        success: function (data) {
+                            if (data) {
+                                $("#Unit").val(data.UnitName);
+                            } else {
+                                $("#Unit").val("");
+                            }
+                        },
+                        error: function () {
+                            alert("Error loading unit for category.");
+                        }
+                    });
+                } else {
+                    $("#Unit").val("");
                 }
             });
+
         });
-
     </script>
-
-
 }

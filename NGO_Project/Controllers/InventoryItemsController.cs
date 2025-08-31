@@ -17,19 +17,34 @@ namespace NGO_Project.Controllers
         // GET: InventoryItems
         public ActionResult Index()
         {
+            var totalItems = db.InventoryItems.Count();
+
             var viewModel = new InventoryDashboardViewModel
             {
                 NewItem = new InventoryItem(),
-                InventoryItems = db.InventoryItems.ToList()
+
+                // Load only items for current page
+                InventoryItems = db.InventoryItems
+                                  .OrderByDescending(i => i.Id)
+                                  .ToList(),
             };
-            // pass units as distinct list from Category table
-            ViewBag.Units = new SelectList(db.Categories.Where(x => x.CategoryName != null)
-                                           .Select(c => c.Unit)
-                                           .Distinct()
-                                           .ToList());
-            ViewBag.Categories = new SelectList(db.Categories.Where(x => x.CategoryName != null), "CategoryId", "CategoryName");
+
+            // Populate dropdowns
+            ViewBag.Units = new SelectList(
+                db.Categories.Where(x => x.CategoryName != null)
+                             .Select(c => c.Unit)
+                             .Distinct()
+                             .ToList()
+            );
+
+            ViewBag.Categories = new SelectList(
+                db.Categories.Where(x => x.CategoryName != null),
+                "CategoryId", "CategoryName"
+            );
+
             return View(viewModel);
         }
+
 
         // POST: InventoryItems/Create (for AJAX)
         [HttpPost]
@@ -47,16 +62,24 @@ namespace NGO_Project.Controllers
                     db.InventoryItems.Add(viewModel.NewItem);
                     db.SaveChanges();
 
+                    // ✅ Get Category name for modal
+                    var categoryName = db.Categories
+                                         .Where(c => c.CategoryId == viewModel.NewItem.CategoryId)
+                                         .Select(c => c.CategoryName)
+                                         .FirstOrDefault();
+
                     return Json(new
                     {
                         success = true,
-                        itemId = viewModel.NewItem.Id
+                        itemId = viewModel.NewItem.Id,
+                        categoryName = categoryName
                     });
                 }
             }
 
             return Json(new { success = false, errors = "Invalid data submitted or user not logged in." });
         }
+
 
         // GET: InventoryItems/GetInventoryItems (Action for AJAX to refresh the table)
         public ActionResult GetInventoryItems()
@@ -157,10 +180,13 @@ namespace NGO_Project.Controllers
         {
             var unit = db.Categories
                          .Where(c => c.CategoryId == categoryId)
-                         .Select(c => c.Unit)
+                         .Select(c => new
+                         {
+                             UnitName = c.Unit
+                         })
                          .FirstOrDefault();
 
-            return Json(new { unit = unit }, JsonRequestBehavior.AllowGet);
+            return Json(unit, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)
