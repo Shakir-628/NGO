@@ -442,8 +442,8 @@
         $(document).ready(function () {
             // ✅ Initialize DataTable once
             inventoryTable = $(".inventory-table").DataTable({
-                pageLength: 5,
-                lengthMenu: [5, 10, 20, 50],
+                pageLength: 10,
+                lengthMenu: [10, 20, 50],
                 searching: true,
                 ordering: true,
                 responsive: true
@@ -520,8 +520,8 @@
                                     inventoryTable.destroy();
                                 }
                                 inventoryTable = $(".inventory-table").DataTable({
-                                    pageLength: 5,
-                                    lengthMenu: [5, 10, 20, 50],
+                                    pageLength: 10,
+                                    lengthMenu: [10, 20, 50],
                                     searching: true,
                                     ordering: true,
                                     responsive: true

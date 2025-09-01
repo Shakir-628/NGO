@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Helping Hands Foundation Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/assets/css/select2.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link href="~/assets/css/select2.min.css" rel="stylesheet" />
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -370,7 +370,7 @@
                 <a class="tab @(currentController == "AidRequests" && currentAction == "Index" ? "active" : "")" href="~/AidRequests/Index">Aid Feed</a>
                 <a class="tab @(currentController == "InventoryItems" && currentAction == "Index" ? "active" : "")" href="~/InventoryItems/Index">Inventory</a>
                 <a class="tab @(currentController == "Donors" && currentAction == "Index" ? "active" : "")" href="~/Donors/Index">CRM</a>
-                <a class="tab @(currentController == "Documents" && currentAction == "Index" ? "active" : "")" href="~/Documents/Index">Documents</a>
+                <a class="tab @(currentController == "DistributionOrders" && currentAction == "Index" ? "active" : "")" href="~/DistributionOrders/Index">Disbursement Item</a>
             </div>
         </div>
         <div>
@@ -381,11 +381,9 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+<script src="~/assets/js/select2.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
-<script src="~/assets/js/select2.min.js"></script>
-<script src="~/assets/js/select2.min.js"></script>
-
 <!-- DataTables JS (must come AFTER jQuery) -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
@@ -446,4 +444,5 @@
             };
         }
     });
+
 </script>

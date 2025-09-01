@@ -70,7 +70,6 @@ namespace NGO_Project.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", document.UserId);
             return View(document);
         }
 
@@ -86,7 +85,6 @@ namespace NGO_Project.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", document.UserId);
             return View(document);
         }
 
@@ -103,7 +101,6 @@ namespace NGO_Project.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "FirstName", document.UserId);
             return View(document);
         }
 

@@ -97,7 +97,7 @@ namespace NGO_Project.Controllers
                 return RedirectToAction("Donor", "Dashboard");
 
             if (userType == "NGO")
-                return RedirectToAction("NGO", "Dashboard");
+                return RedirectToAction("Index", "RequestedItems");
 
             return RedirectToAction("login");
         }

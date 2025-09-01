@@ -19,8 +19,14 @@ namespace NGO_Project.Controllers
         {
             try
             {
-                var distributionOrders = db.DistributionOrders.Include(d => d.DistributionOrders1).Include(d => d.DistributionOrder1);
-                return View(distributionOrders.ToList());
+                var vm = new Models.InventoryDocumentViewModel
+                {
+                    InventoryItems = db.InventoryItems.Include("Category").ToList(),
+                    Documents = db.Documents.ToList()
+                };
+
+                return View(vm);
+
             }
             catch (Exception ex)
             {
@@ -29,8 +35,25 @@ namespace NGO_Project.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult SaveDisbursement(Document doc)
+        {
+            try
+            {
+                doc.GeneratedDate = DateTime.Now;
+                db.Documents.Add(doc);
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Disbursement saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         // GET: DistributionOrders/Details/5
-        
+
         public ActionResult Details(int? id)
         {
             try
