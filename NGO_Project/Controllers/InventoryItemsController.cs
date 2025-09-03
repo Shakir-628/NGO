@@ -29,6 +29,12 @@ namespace NGO_Project.Controllers
                                   .ToList(),
             };
 
+            ViewBag.CategoriesList = db.Categories
+                 .Where(x => x.CategoryName != null)
+                 .OrderBy(c => c.CategoryName)
+                 .ToList();
+
+
             // Populate dropdowns
             ViewBag.Units = new SelectList(
                 db.Categories.Where(x => x.CategoryName != null)
@@ -68,6 +74,11 @@ namespace NGO_Project.Controllers
                                          .Select(c => c.CategoryName)
                                          .FirstOrDefault();
 
+                    ViewBag.CategoriesList = db.Categories
+                         .Where(x => x.CategoryName != null)
+                         .OrderBy(c => c.CategoryName)
+                         .ToList();
+
                     return Json(new
                     {
                         success = true,
@@ -80,6 +91,33 @@ namespace NGO_Project.Controllers
             return Json(new { success = false, errors = "Invalid data submitted or user not logged in." });
         }
 
+
+        [HttpPost]
+        public JsonResult EditCategory(int id, string categoryName, string unit)
+        {
+            var category = db.Categories.Find(id);
+            if (category == null)
+                return Json(new { success = false, message = "Category not found." });
+
+            category.CategoryName = categoryName;
+            category.Unit = unit;
+            db.SaveChanges();
+            return Json(new { success = true });
+        }
+
+
+
+        [HttpPost]
+        public JsonResult DeleteCategory(int id)
+        {
+            var category = db.Categories.Find(id);
+            if (category == null)
+                return Json(new { success = false, message = "Category not found." });
+
+            db.Categories.Remove(category);
+            db.SaveChanges();
+            return Json(new { success = true });
+        }
 
         // GET: InventoryItems/GetInventoryItems (Action for AJAX to refresh the table)
         public ActionResult GetInventoryItems()

@@ -210,6 +210,18 @@
             </div>
 
             <div>
+                <label class="block text-sm font-medium text-gray-700">CNIC</label>
+                <input type="text" name="cnic" required
+                       class="cnic mt-2 w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 shadow-sm" />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Phone No</label>
+                <input type="text" name="phoneNo" required
+                       class="mobile mt-2 w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 shadow-sm" />
+            </div>
+
+            <div>
                 <label class="block text-sm font-medium text-gray-700">Purpose</label>
                 <textarea name="purpose" required
                           class="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 shadow-sm"></textarea>
@@ -219,6 +231,7 @@
                 <h3 class="font-semibold text-gray-800 mb-2">Selected Items</h3>
                 <div id="modal-selected-items" class="space-y-2 text-sm text-gray-700 bg-gray-50 p-3 rounded-lg"></div>
             </div>
+
 
             <div class="flex justify-end space-x-3 pt-4">
                 <button type="button" id="cancel-modal-btn"
@@ -233,7 +246,7 @@
         </form>
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     lucide.createIcons();
     let selectedItems = [];
@@ -347,6 +360,8 @@
 
         let payload = {
             BeneficiaryName: this.beneficiary.value,
+            Cnic: this.cnic.value,
+            PhoneNo: this.phoneNo.value,
             Purpose: this.purpose.value,
             Items: JSON.stringify(selectedItems),
             GeneratedDate: new Date().toISOString()
@@ -358,31 +373,23 @@
             data: payload,
             success: function (res) {
                 if (res.success) {
-                    alert("✅ " + res.message);
-                    selectedItems = [];
-                    renderSelectedItems();
-                    $("#disbursement-modal").addClass("hidden");
-
-                    // instead of full reload, update doc list dynamically
-                    const newRow = `
-                        <tr class="border-b">
-                            <td class="px-4 py-3">${payload.BeneficiaryName}</td>
-                            <td class="px-4 py-3">${payload.Purpose}</td>
-                            <td class="px-4 py-3">${payload.Items}</td>
-                            <td class="px-4 py-3">${new Date(payload.GeneratedDate).toLocaleDateString()}</td>
-                        </tr>`;
-                    $("#documents-list").append(newRow);
-
-                    // update document count badge
-                    const countSpan = document.getElementById("document-count");
-                    countSpan.textContent = parseInt(countSpan.textContent) + 1;
+                    Swal.fire({
+                        icon: "success",
+                        title: "Success",
+                        text: res.message,
+                        showConfirmButton: false,
+                        timer: 4000
+                    }).then(() => {
+                        location.reload(); // reload after alert closes
+                    });
                 } else {
-                    alert("❌ Failed: " + res.message);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed",
+                        text: res.message,
+                    });
                 }
             },
-            error: function () {
-                alert("❌ Error saving disbursement!");
-            }
         });
     });
 
@@ -393,16 +400,36 @@
         const itemQuery = document.getElementById("search-item-input").value.toLowerCase();
         const categoryQuery = document.getElementById("search-category-input").value.toLowerCase();
 
-        document.querySelectorAll(".inventory-card").forEach(card => {
+        const cards = document.querySelectorAll(".inventory-card");
+        let visibleCount = 0;
+
+        cards.forEach(card => {
             const itemName = card.dataset.name.toLowerCase();
             const category = card.dataset.category.toLowerCase();
 
             const matchesItem = !itemQuery || itemName.includes(itemQuery);
             const matchesCategory = !categoryQuery || category.includes(categoryQuery);
 
-            card.classList.toggle("hidden", !(matchesItem && matchesCategory));
+            const isVisible = matchesItem && matchesCategory;
+            card.classList.toggle("hidden", !isVisible);
+
+            if (isVisible) visibleCount++;
         });
+
+        // Check if message already exists
+        let notFoundMsg = document.getElementById("not-found-msg");
+        if (!notFoundMsg) {
+            notFoundMsg = document.createElement("p");
+            notFoundMsg.id = "not-found-msg";
+            notFoundMsg.className = "text-center text-gray-500 italic py-6";
+            notFoundMsg.textContent = "Item not found";
+            document.getElementById("inventory-grid").appendChild(notFoundMsg);
+        }
+
+        // Show/hide message based on results
+        notFoundMsg.style.display = visibleCount === 0 ? "block" : "none";
     }
+
 
     document.getElementById("search-item-input").addEventListener("input", filterInventory);
     document.getElementById("search-category-input").addEventListener("input", filterInventory);

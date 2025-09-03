@@ -44,7 +44,7 @@ namespace NGO_Project.Controllers
                 db.Documents.Add(doc);
                 db.SaveChanges();
 
-                return Json(new { success = true, message = "Disbursement saved successfully!" });
+                return Json(new { success = true, message = "Donor Info disbursement saved successfully!" });
             }
             catch (Exception ex)
             {

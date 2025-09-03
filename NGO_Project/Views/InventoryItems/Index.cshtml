@@ -366,8 +366,9 @@
 
     <div class="modal-bg" id="feedModalBg">
         <div class="modal-content">
-            <h2>Add New Category</h2>
+            <h2>Manage Categories & Units</h2>
 
+            <!-- Add New Category Form -->
             @using (Html.BeginForm("CreateCategory", "InventoryItems", FormMethod.Post, new { id = "createCategoryForm" }))
             {
                 @Html.AntiForgeryToken()
@@ -391,12 +392,62 @@
                 </div>
 
                 <div class="modal-form-actions">
-                    <button type="submit" class="btn btn-success">Save</button>
-                    <button type="button" class="secondary" id="cancelFeedModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Category</button>
+                    <button type="button" class="btn btn-cancel" id="cancelFeedModalBtn">Close</button>
                 </div>
             }
+
+            <div style="margin-top: 30px; background: #fff; border: 1.5px solid #e5e7eb; padding: 20px; border-radius: 10px;">
+                <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 15px;">Manage Categories & Units</h2>
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Unit</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    @if (ViewBag.CategoriesList != null)
+                    {
+                        <tbody id="categoriesTableBody">
+                            @foreach (var cat in ViewBag.CategoriesList as List<NGO_Project.Category>)
+                            {
+                                <tr data-id="@cat.CategoryId">
+                                    <td class="cat-name">@cat.CategoryName</td>
+                                    <td class="cat-unit">@cat.Unit</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm editCategoryBtn">Edit</button>
+                                        <button class="btn btn-cancel btn-sm deleteCategoryBtn">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+            <div class="modal-bg" id="editCategoryModal" style="display:none;">
+                <div class="modal-content">
+                    <h2>Edit Category</h2>
+                    <form id="editCategoryForm">
+                        <input type="hidden" id="editCategoryId" name="id" />
+                        <div class="form-group">
+                            <label>Category Name</label>
+                            <input type="text" id="editCategoryName" name="categoryName" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Unit</label>
+                            <input type="text" id="editCategoryUnit" name="unit" class="form-control" required />
+                        </div>
+                        <div class="modal-form-actions">
+                            <button type="submit" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-cancel" id="cancelEditCategoryBtn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+
     <div class="modal-bg" id="donorModalBg" style="display:none;">
         <div class="modal-content">
             <h2>Donor Information</h2>
@@ -622,6 +673,113 @@
                 }
             });
 
+            // --- Edit Category ---
+            $(document).on("click", ".editCategoryBtn", function () {
+                var row = $(this).closest("tr");
+                var id = row.data("id");
+                var name = row.find(".cat-name").text();
+                var unit = row.find(".cat-unit").text();
+
+                $("#editCategoryId").val(id);
+                $("#editCategoryName").val(name);
+                $("#editCategoryUnit").val(unit);
+
+                $("#editCategoryModal").show();
+            });
+
+            $("#cancelEditCategoryBtn").click(function () {
+                $("#editCategoryModal").hide();
+            });
+
+            $("#editCategoryForm").submit(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: "/InventoryItems/EditCategory",
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        if (res.success) {
+                            swal("Success!", "Category updated successfully!", "success")
+                                .then(() => location.reload());
+                        } else {
+                            swal("Error!", res.message, "error");
+                        }
+                    }
+                });
+            });
+
+
+            // --- Edit Category ---
+            $(document).on("click", ".editCategoryBtn", function () {
+                var row = $(this).closest("tr");
+                var id = row.data("id");
+                var name = row.find(".cat-name").text();
+                var unit = row.find(".cat-unit").text();
+
+                $("#editCategoryId").val(id);
+                $("#editCategoryName").val(name);
+                $("#editCategoryUnit").val(unit);
+
+                $("#editCategoryModal").show();
+            });
+
+            $("#cancelEditCategoryBtn").click(function () {
+                $("#editCategoryModal").hide();
+            });
+
+            $("#editCategoryForm").submit(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: "/InventoryItems/EditCategory",
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        if (res.success) {
+                            swal("Success!", "Category updated successfully!", "success")
+                                .then(() => location.reload());
+                        } else {
+                            swal("Error!", res.message, "error");
+                        }
+                    }
+                });
+            });
+
+            // --- Delete Category ---
+            $(document).on("click", ".deleteCategoryBtn", function () {
+                var row = $(this).closest("tr");
+                var id = row.data("id");
+
+                swal({
+                    title: "Are you sure?",
+                    text: "This will permanently delete the category.",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: "/InventoryItems/DeleteCategory",
+                            type: "POST",
+                            data: { id: id },
+                            success: function (res) {
+                                if (res.success) {
+                                    swal("Deleted!", "Category has been deleted.", "success")
+                                        .then(() => row.remove());
+                                } else {
+                                    swal("Error!", res.message, "error");
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+
+
         });
     </script>
+
+
 }
